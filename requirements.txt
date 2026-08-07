@@ -1,0 +1,28 @@
+# Dependencias do Projeto LLM (MegaBrain)
+#
+# Instalacao:
+#   pip install -r requirements.txt
+#
+# A linha --extra-index-url abaixo instala a build do PyTorch com suporte a CUDA 12.6.
+# Em maquinas sem GPU NVIDIA, remova essa linha para usar a build de CPU do PyPI.
+--extra-index-url https://download.pytorch.org/whl/cu126
+
+# Nucleo do projeto
+torch>=2.9
+
+# Tokenizacao (Capitulo 2 em diante)
+tiktoken>=0.8
+
+# Manipulacao numerica e de dados
+numpy>=2.0
+pandas>=2.2
+
+# Visualizacao de resultados e curvas de treinamento
+matplotlib>=3.9
+
+# Notebooks
+jupyterlab>=4.2
+ipykernel>=6.29
+
+# Barras de progresso no treinamento
+tqdm>=4.66
