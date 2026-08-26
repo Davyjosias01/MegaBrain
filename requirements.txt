@@ -26,3 +26,6 @@ ipykernel>=6.29
 
 # Barras de progresso no treinamento
 tqdm>=4.66
+
+#Byte Pair Encoding (BPE) Tokenizador usado no ChatGpt e outros modelos de linguagem
+tiktoken>=0.8
