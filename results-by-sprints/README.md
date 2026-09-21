@@ -18,6 +18,12 @@ results-by-sprints/
 └── ...
 ```
 
+## Conteúdo
+
+| Diretório | Sprint | Artefatos |
+|---|---|---|
+| [`sprint03/`](sprint03/) | 3 | 13 figuras das matrizes de atenção e dos experimentos, 10 tabelas `.csv` e o log de execução com o ambiente utilizado |
+
 ## Convenções
 
 - Registrar, junto aos resultados, a configuração que os produziu (hiperparâmetros, semente, hardware)

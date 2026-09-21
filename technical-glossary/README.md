@@ -23,6 +23,12 @@ Sempre que aplicável, uma entrada deve apresentar:
 Um arquivo por capítulo, nomeado como `capitulo-NN.md` (ex.: `capitulo-01.md`), mantendo as entradas
 em ordem alfabética dentro de cada arquivo.
 
+## Glossários disponíveis
+
+| Arquivo | Capítulo | Assunto |
+|---|---|---|
+| [`capitulo-03.md`](capitulo-03.md) | 3 | Mecanismos de atenção: self-attention, scaled dot-product, causal attention e multi-head attention |
+
 > O glossário do Capítulo 1 encontra-se atualmente em
 > [`documentation/Glossario.docx`](../documentation/Glossario.docx).
 

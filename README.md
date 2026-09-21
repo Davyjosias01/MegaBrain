@@ -209,7 +209,28 @@ Se todas as verificações forem aprovadas, o ambiente está pronto para as pró
 |---|---|
 | Sprint 0 — Preparação do ambiente | Concluída |
 | Sprint 1 — Capítulo 1 | Em andamento |
-| Sprints 2 a 6 | Não iniciadas |
+| Sprint 2 — Capítulo 2 | Em andamento |
+| Sprint 3 — Capítulo 3 | Concluída |
+| Sprints 4 a 6 | Não iniciadas |
+
+**Sprint 3 — mecanismos de atenção.** Implementação de self-attention, scaled dot-product attention,
+causal attention e multi-head attention, com oito experimentos e visualização das matrizes de
+atenção.
+
+| Entregável | Onde |
+|---|---|
+| Implementação dos quatro mecanismos | [`src/attention.py`](src/attention.py) |
+| Validação contra os valores do livro | [`src/validar_atencao.py`](src/validar_atencao.py) |
+| Notebook didático | [`notebook/sprint03-mecanismos-de-atencao.ipynb`](notebook/sprint03-mecanismos-de-atencao.ipynb) |
+| Experimentos | [`experiments/sprint03-atencao/`](experiments/sprint03-atencao/) |
+| Figuras e tabelas | [`results-by-sprints/sprint03/`](results-by-sprints/sprint03/) |
+| Análise dos resultados | [`reports/sprint03-relatorio.md`](reports/sprint03-relatorio.md) |
+| Glossário do Capítulo 3 | [`technical-glossary/capitulo-03.md`](technical-glossary/capitulo-03.md) |
+
+```bash
+python src/validar_atencao.py                       # 28 verificações contra o livro
+cd experiments/sprint03-atencao && python executar_todos.py
+```
 
 ---
 

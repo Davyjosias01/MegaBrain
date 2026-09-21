@@ -11,6 +11,9 @@ experimentos consomem estes módulos, nunca o contrário.
 | Arquivo | Descrição |
 |---|---|
 | `verificar_ambiente.py` | Valida a instalação do ambiente: versão do Python, PyTorch, disponibilidade de CUDA, operações com tensores e *autograd* |
+| `attention.py` | **Sprint 3** — mecanismos de atenção: `atencao_simples`, `scaled_dot_product_attention`, `SelfAttentionV1`, `SelfAttentionV2`, `CausalAttention`, `MultiHeadAttentionWrapper` e `MultiHeadAttention` |
+| `entradas_atencao.py` | **Sprint 3** — ponte com a Sprint 2: tokenização BPE, janela deslizante e embeddings (de token e posicionais) que alimentam os mecanismos de atenção |
+| `validar_atencao.py` | **Sprint 3** — 28 verificações de `attention.py` contra os valores publicados no Capítulo 3 e contra as propriedades matemáticas dos mecanismos |
 
 ## Organização prevista
 
@@ -27,5 +30,6 @@ Conforme as sprints avançam, o diretório receberá os módulos correspondentes
 Com o ambiente virtual ativo, a partir da raiz do repositório:
 
 ```bash
-python src/verificar_ambiente.py
+python src/verificar_ambiente.py   # valida o ambiente (Sprint 0)
+python src/validar_atencao.py      # valida os mecanismos de atenção (Sprint 3)
 ```

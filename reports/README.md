@@ -16,6 +16,12 @@ relacionados aos conceitos estudados no capítulo correspondente.
 5. **Análise** — interpretação dos resultados à luz dos conceitos do capítulo
 6. **Limitações e próximos passos**
 
+## Relatórios
+
+| Arquivo | Sprint | Assunto |
+|---|---|---|
+| [`sprint03-relatorio.md`](sprint03-relatorio.md) | 3 | Mecanismos de atenção: implementação, oito experimentos e análise |
+
 ## Convenções
 
 - Um arquivo por sprint, nomeado como `sprintNN-relatorio.md`
