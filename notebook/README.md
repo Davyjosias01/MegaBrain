@@ -14,6 +14,12 @@ duplicar a implementação. Isso mantém uma única fonte de verdade para o cód
 - Manter células de texto explicando o que cada trecho demonstra — o notebook é material de estudo,
   não apenas código
 
+## Notebooks
+
+| Arquivo | Sprint | Assunto |
+|---|---|---|
+| [`sprint03-mecanismos-de-atencao.ipynb`](sprint03-mecanismos-de-atencao.ipynb) | 3 | Os quatro mecanismos de atenção do Capítulo 3, passo a passo, com os exercícios 3.1, 3.2 e 3.3 |
+
 ## Execução
 
 Com o ambiente virtual ativo, a partir da raiz do repositório:

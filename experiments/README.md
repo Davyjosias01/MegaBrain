@@ -10,6 +10,12 @@ processamento, ou qual a influência da taxa de aprendizado sobre a curva de per
 
 Um experimento reutiliza os componentes de [`src/`](../src/) e varia apenas o que está sob teste.
 
+## Experimentos realizados
+
+| Diretório | Sprint | Assunto |
+|---|---|---|
+| [`sprint03-atencao/`](sprint03-atencao/) | 3 | Oito experimentos sobre os mecanismos de atenção: dimensões, número e tamanho das cabeças, escala, máscara causal e sequências de entrada |
+
 ## Convenções
 
 - Cada experimento em seu próprio arquivo ou subdiretório, nomeado como `sprintNN-assunto`

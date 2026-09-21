@@ -1,0 +1,189 @@
+
+==========================================================================
+Sprint 3 — execução dos experimentos de atenção
+==========================================================================
+  data           : 2026-09-20 20:53:08
+  python         : 3.14.5
+  torch          : 2.13.0+cu126
+  dispositivo    : cpu (todos os experimentos)
+  cuda disponível: True
+  threads torch  : 6
+  semente        : 123
+  processador    : Intel64 Family 6 Model 165 Stepping 2, GenuineIntel
+  sistema        : Windows-11-10.0.26200-SP0
+
+==========================================================================
+Experimento 01 — diferentes dimensões de embedding
+==========================================================================
+  num_heads=4  num_tokens=128  batch=8  corpus=the-verdict.txt
+  d_in = d_out  head_dim  parametros  elementos_matriz_atencao  tempo_ms  entropia_normalizada
+  ------------  --------  ----------  ------------------------  --------  --------------------
+  16            4         1,040       524,288                   0.9234    0.9482              
+  32            8         4,128       524,288                   1.2895    0.9380              
+  64            16        16,448      524,288                   1.0799    0.9401              
+  128           32        65,664      524,288                   1.2878    0.9437              
+  256           64        262,400     524,288                   3.0036    0.9398              
+  512           128       1,049,088   524,288                   9.0556    0.9397              
+  tabela -> results-by-sprints/sprint03/exp01-dimensao-embedding.csv
+  figura -> results-by-sprints/sprint03/exp01-dimensao-embedding.png
+
+==========================================================================
+Experimento 02 — diferentes números de cabeças (d_out fixo)
+==========================================================================
+  d_in = d_out = 96  num_tokens=128  batch=8
+  num_heads  head_dim  parametros  matrizes_atencao  tempo_ms  entropia_normalizada  dissimilaridade_entre_cabecas
+  ---------  --------  ----------  ----------------  --------  --------------------  -----------------------------
+  1          96        36,960      8                 0.6850    0.9417                0.0000                       
+  2          48        36,960      16                0.9746    0.9416                0.4441                       
+  3          32        36,960      24                0.9044    0.9419                0.4332                       
+  4          24        36,960      32                1.1499    0.9410                0.4367                       
+  6          16        36,960      48                1.3291    0.9415                0.4326                       
+  8          12        36,960      64                2.4191    0.9411                0.4323                       
+  12         8         36,960      96                4.3053    0.9415                0.4278                       
+  16         6         36,960      128               6.4138    0.9415                0.4262                       
+  tabela -> results-by-sprints/sprint03/exp02-numero-de-heads.csv
+  figura -> results-by-sprints/sprint03/exp02-numero-de-heads.png
+
+==========================================================================
+Experimento 03 — diferentes dimensões de cabeça (num_heads fixo)
+==========================================================================
+  d_in=128  num_heads=4  num_tokens=128  batch=8
+  head_dim  d_out  parametros  tempo_ms  entropia_normalizada  dissimilaridade_entre_cabecas
+  --------  -----  ----------  --------  --------------------  -----------------------------
+  4         16     6,416       1.0095    0.9406                0.4215                       
+  8         32     13,344      1.0261    0.9405                0.4262                       
+  16        64     28,736      1.0284    0.9439                0.4171                       
+  32        128    65,664      1.7102    0.9437                0.4203                       
+  64        256    164,096     2.4144    0.9431                0.4305                       
+  128       512    459,264     5.2492    0.9427                0.4273                       
+  tabela -> results-by-sprints/sprint03/exp03-dimensao-de-head.csv
+  figura -> results-by-sprints/sprint03/exp03-dimensao-de-head.png
+
+==========================================================================
+Experimento 04 — Self-Attention x Multi-Head Attention
+==========================================================================
+  d_in = d_out = 96  num_heads=4  num_tokens=128  batch=8
+  mecanismo                  cabecas  d_saida  parametros  causal  tempo_ms  entropia_normalizada  dissimilaridade_entre_cabecas
+  -------------------------  -------  -------  ----------  ------  --------  --------------------  -----------------------------
+  atencao_simples            1        96       0           nao     0.3196    0.0000                0.0000                       
+  SelfAttentionV2            1        96       27,648      nao     0.4602    0.9544                0.0000                       
+  CausalAttention            1        96       27,648      sim     0.6629    0.9417                0.0000                       
+  MultiHeadAttentionWrapper  4        96       27,648      sim     1.7907    0.9406                0.4325                       
+  MultiHeadAttention         4        96       36,960      sim     1.2957    0.9410                0.4367                       
+  tabela -> results-by-sprints/sprint03/exp04-self-vs-multihead.csv
+
+  Diferença entre as cabeças da MultiHeadAttention: 0.4367 (0 significaria cabeças redundantes).
+  Observação: a MultiHeadAttention tem 9,312 parâmetros a mais que o wrapper — é a projeção de saída out_proj, que só ela possui.
+  figura -> results-by-sprints/sprint03/exp04-self-vs-multihead.png
+
+  Empilhamento x divisão de pesos, em escalas crescentes:
+  (torch usando 6 threads de CPU)
+  d_modelo  num_heads  num_tokens  projecao_separada_ms  projecao_unica_ms  ganho_na_projecao  forward_wrapper_ms  forward_multihead_ms  ganho_no_forward
+  --------  ---------  ----------  --------------------  -----------------  -----------------  ------------------  --------------------  ----------------
+  96        4          128         0.0948                0.0385             2.4634             1.2879              0.8385                1.5360          
+  192       4          128         0.1824                0.1002             1.8199             1.6829              1.1989                1.4037          
+  384       8          256         0.8367                0.7030             1.1901             7.9581              10.0075               0.7952          
+  768       12         256         4.7165                3.2092             1.4697             19.3934             26.1960               0.7403          
+  tabela -> results-by-sprints/sprint03/exp04-empilhamento-vs-divisao.csv
+  ganho > 1 significa que a divisão de pesos é mais rápida; < 1, que o empilhamento é.
+  figura -> results-by-sprints/sprint03/exp04-empilhamento-vs-divisao.png
+
+==========================================================================
+Experimento 05 — visualização das matrizes de atenção
+==========================================================================
+  figura -> results-by-sprints/sprint03/exp05-matriz-livro.png
+  figura -> results-by-sprints/sprint03/exp05-matriz-corpus.png
+  figura -> results-by-sprints/sprint03/exp05-matriz-por-cabeca.png
+
+==========================================================================
+Experimento 06 — atenção com e sem a divisão por raiz de d_k
+==========================================================================
+  num_tokens=64  Q e K ~ N(0, 1)  média de 10 sorteios por configuração
+  d_k    escala  desvio_padrao_scores  peso_maximo_medio  entropia_normalizada  sensibilidade_do_softmax  norma_gradiente_scores
+  -----  ------  --------------------  -----------------  --------------------  ------------------------  ----------------------
+  2      com     0.9567                0.0939             0.9029                0.9608                    0.1765                
+  2      sem     1.3530                0.1505             0.8298                0.9299                    0.2147                
+  8      com     1.0057                0.1084             0.8868                0.9590                    0.1916                
+  8      sem     2.8446                0.4321             0.4937                0.7097                    0.3002                
+  32     com     0.9953                0.1074             0.8870                0.9608                    0.1772                
+  32     sem     5.6304                0.7003             0.2166                0.4098                    0.2404                
+  128    com     0.9967                0.1065             0.8876                0.9618                    0.1823                
+  128    sem     11.2767               0.8586             0.0908                0.1996                    0.1431                
+  512    com     1.0106                0.1067             0.8850                0.9610                    0.1822                
+  512    sem     22.8667               0.9285             0.0434                0.1022                    0.1401                
+  2,048  com     1.0025                0.1072             0.8868                0.9615                    0.1966                
+  2,048  sem     45.3695               0.9714             0.0182                0.0431                    0.0501                
+  tabela -> results-by-sprints/sprint03/exp06-com-e-sem-escala.csv
+
+  Em d_k = 2048:
+    sem escala — peso máximo médio 0.9714, sensibilidade do softmax 4.307e-02, norma do gradiente 5.013e-02
+    com escala — peso máximo médio 0.1072, sensibilidade do softmax 9.615e-01, norma do gradiente 1.966e-01
+  figura -> results-by-sprints/sprint03/exp06-com-e-sem-escala.png
+
+==========================================================================
+Experimento 07 — comportamento da máscara causal
+==========================================================================
+  1. figura 3.20 (zerar e renormalizar) == figura 3.21 (-inf antes do softmax): sim  (maior diferença = 5.96e-08)
+  2. soma das linhas após a máscara: mínimo 1.000000, máximo 1.000000
+     pesos acima da diagonal: máximo 0.0e+00
+  3. token 12 perturbado — maior mudança nos contextos anteriores:
+     com máscara: 0.00e+00  |  sem máscara: 5.57e+01
+     nas posições a partir de 12, com máscara: 5.58e+01
+  posicao  token    posicoes_visiveis_com_mascara  peso_maximo_com_mascara  peso_maximo_sem_mascara  atencao_ao_proprio_token
+  -------  -------  -----------------------------  -----------------------  -----------------------  ------------------------
+  0        I        1                              1.0000                   0.1359                   1.0000                  
+  1        H        2                              0.5547                   0.0794                   0.5547                  
+  2        AD       3                              0.4837                   0.0929                   0.4837                  
+  3        always   4                              0.3740                   0.1658                   0.3740                  
+  4        thought  5                              0.3727                   0.1102                   0.0685                  
+  5        Jack     6                              0.3808                   0.1003                   0.0923                  
+  6        G        7                              0.3144                   0.1212                   0.0484                  
+  7        is       8                              0.2286                   0.1048                   0.1535                  
+  ... (tabela completa no CSV)
+  tabela -> results-by-sprints/sprint03/exp07-mascara-causal-por-posicao.csv
+     entropia normalizada — com máscara 0.9188, sem máscara 0.9350
+
+  5. efeito do dropout sobre os pesos de atenção (modo treino):
+  dropout  fracao_pesos_zerados  soma_media_das_linhas  peso_maximo
+  -------  --------------------  ---------------------  -----------
+  0.0000   0.0000                1.0000                 1.0000     
+  0.1000   0.1000                1.0095                 1.1111     
+  0.2000   0.2233                0.9845                 1.2500     
+  0.5000   0.5033                0.9993                 2.0000     
+  tabela -> results-by-sprints/sprint03/exp07-mascara-causal-dropout.csv
+  figura -> results-by-sprints/sprint03/exp07-mascara-causal.png
+  figura -> results-by-sprints/sprint03/exp07-vazamento-de-informacao.png
+
+==========================================================================
+Experimento 08 — diferentes sequências de entrada
+==========================================================================
+
+  (a) conteúdo — d_in = d_out = 64, num_heads = 4
+  sequencia                        num_tokens  entropia_normalizada  atencao_ao_primeiro_token  atencao_ao_proprio_token  peso_maximo_fora_da_linha_0
+  -------------------------------  ----------  --------------------  -------------------------  ------------------------  ---------------------------
+  exemplo do livro                 7           0.8875                0.2316                     0.2900                    0.8324                     
+  narrativa (corpus)               27          0.9055                0.1143                     0.1118                    0.8836                     
+  diálogo (corpus)                 25          0.9262                0.1194                     0.1173                    0.8442                     
+  token repetido                   21          0.9316                0.1407                     0.1306                    0.7943                     
+  token repetido (sem posicional)  21          0.9910                0.1267                     0.1346                    0.7668                     
+  tokens sem relação               19          0.8867                0.1394                     0.1292                    0.9285                     
+  pontuação pesada                 19          0.9120                0.1499                     0.1393                    0.7406                     
+  tabela -> results-by-sprints/sprint03/exp08-sequencias-conteudo.csv
+  figura -> results-by-sprints/sprint03/exp08-sequencias-conteudo.png
+
+  (b) comprimento — lote de 8 sequências de the-verdict.txt
+  num_tokens  elementos_matriz_atencao  tempo_ms  tempo_por_token_us  entropia_normalizada  atencao_ao_primeiro_token
+  ----------  ------------------------  --------  ------------------  --------------------  -------------------------
+  8           2,048                     0.3141    4.9073              0.8746                0.2478                   
+  16          8,192                     0.4718    3.6863              0.8989                0.1603                   
+  32          32,768                    0.4037    1.5769              0.9143                0.0970                   
+  64          131,072                   0.5641    1.1018              0.9283                0.0588                   
+  128         524,288                   0.9275    0.9058              0.9401                0.0340                   
+  256         2,097,152                 6.7042    3.2735              0.9492                0.0197                   
+  tabela -> results-by-sprints/sprint03/exp08-sequencias-comprimento.csv
+  figura -> results-by-sprints/sprint03/exp08-sequencias-comprimento.png
+
+==========================================================================
+Concluído
+==========================================================================
+  artefatos em results-by-sprints/sprint03/
