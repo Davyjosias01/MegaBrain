@@ -1,0 +1,12 @@
+medida,valor
+cosseno entre ocorrências do mesmo token — sem posição,0.9999998807907104
+cosseno entre ocorrências do mesmo token — com posição,0.3670908510684967
+distância entre o vetor de ' dog' em A e em B — sem posição,0.0
+distância entre o vetor de ' dog' em A e em B — com posição,12.246950149536133
+A e B formam o mesmo conjunto de vetores — sem posição (1 = sim),1.0
+A e B formam o mesmo conjunto de vetores — com posição (1 = sim),0.0
+‖média(A) − média(B)‖ — com posição (a média descarta a ordem),2.860297740880924e-07
+cosseno médio entre posições vizinhas (|i−j| = 1),-0.034584034234285355
+cosseno médio entre posições distantes (|i−j| ≥ 16),-0.005416844971477985
+norma média do embedding de token,7.718630790710449
+norma média do embedding posicional,8.363028526306152

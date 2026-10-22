@@ -114,8 +114,9 @@ Toda sprint segue o mesmo ciclo de trabalho, definido pelo componente curricular
 |---|---|
 | [`src/`](src/) | Código-fonte dos componentes do LLM (tokenizador, embeddings, atenção, blocos Transformer, modelo GPT, treinamento) |
 | [`notebook/`](notebook/) | Notebooks Jupyter de exploração, demonstração e visualização de cada etapa |
+| [`sprints/`](sprints/) | Notebooks de leitura das Sprints 1 e 2 e o corpus `the-verdict.txt` usado desde a Sprint 2 |
 | [`technical-glossary/`](technical-glossary/) | Glossário técnico cumulativo, organizado por capítulo |
-| [`documentation/`](documentation/) | Material de referência: livro-texto, descrição do projeto e documentos de apoio |
+| [`documentation/`](documentation/) | Material de referência: descrição do projeto, instruções de cada sprint e documentos de apoio |
 | [`experiments/`](experiments/) | Experimentos de variação de parâmetros, configurações e dados |
 | [`reports/`](reports/) | Relatórios técnicos com a análise dos resultados de cada sprint |
 | [`results-by-sprints/`](results-by-sprints/) | Artefatos produzidos em cada sprint: métricas, gráficos, logs e saídas dos modelos |
@@ -208,10 +209,44 @@ Se todas as verificações forem aprovadas, o ambiente está pronto para as pró
 | Sprint | Situação |
 |---|---|
 | Sprint 0 — Preparação do ambiente | Concluída |
-| Sprint 1 — Capítulo 1 | Em andamento |
-| Sprint 2 — Capítulo 2 | Em andamento |
+| Sprint 1 — Capítulo 1 | Concluída |
+| Sprint 2 — Capítulo 2 | Concluída |
 | Sprint 3 — Capítulo 3 | Concluída |
 | Sprints 4 a 6 | Não iniciadas |
+
+As instruções de cada sprint estão em [`documentation/instrucoes-sprints/`](documentation/instrucoes-sprints/).
+
+**Sprint 0 — preparação do ambiente.** Repositório, ambiente validado por
+[`src/verificar_ambiente.py`](src/verificar_ambiente.py) e leitura do Apêndice A (PyTorch), com
+respostas em [`sprints/Sprint-1.ipynb`](sprints/Sprint-1.ipynb).
+
+**Sprint 1 — introdução aos LLMs.**
+
+| Entregável | Onde |
+|---|---|
+| Respostas da leitura do Capítulo 1 e do Apêndice A | [`sprints/Sprint-1.ipynb`](sprints/Sprint-1.ipynb) |
+| Mapa conceitual da arquitetura GPT | [`reports/sprint01-relatorio.md`](reports/sprint01-relatorio.md) |
+| Glossário do Capítulo 1 | [`technical-glossary/capitulo-01.md`](technical-glossary/capitulo-01.md) |
+
+**Sprint 2 — processamento de texto.** Tokenização (expressão regular e BPE), vocabulário e Token IDs,
+pares entrada/alvo, DataLoader e embeddings de token e posicionais, com oito experimentos.
+
+| Entregável | Onde |
+|---|---|
+| Tokenização, vocabulário e Token IDs | [`src/tokenizacao.py`](src/tokenizacao.py) |
+| Sequências de treinamento e DataLoader | [`src/dados.py`](src/dados.py) |
+| Embeddings de token e posicionais | [`src/embeddings.py`](src/embeddings.py) |
+| Validação contra os valores do livro | [`src/validar_dados.py`](src/validar_dados.py) |
+| Notebook da leitura, com saídas executadas | [`sprints/Sprint-2.ipynb`](sprints/Sprint-2.ipynb) |
+| Experimentos | [`experiments/sprint02-texto/`](experiments/sprint02-texto/) |
+| Figuras e tabelas | [`results-by-sprints/sprint02/`](results-by-sprints/sprint02/) |
+| Análise dos resultados | [`reports/sprint02-relatorio.md`](reports/sprint02-relatorio.md) |
+| Glossário do Capítulo 2 | [`technical-glossary/capitulo-02.md`](technical-glossary/capitulo-02.md) |
+
+```bash
+python src/validar_dados.py                         # 38 verificações contra o livro
+cd experiments/sprint02-texto && python executar_todos.py
+```
 
 **Sprint 3 — mecanismos de atenção.** Implementação de self-attention, scaled dot-product attention,
 causal attention e multi-head attention, com oito experimentos e visualização das matrizes de
@@ -263,3 +298,6 @@ domínio técnico sobre o material entregue reduz a nota individual.
 ## Referência
 
 RASCHKA, Sebastian. **Build a Large Language Model (From Scratch)**. Manning Publications.
+
+O livro é material protegido por direitos autorais e não é versionado neste repositório público: cada
+integrante mantém sua própria cópia em `documentation/`, ignorada pelo Git.

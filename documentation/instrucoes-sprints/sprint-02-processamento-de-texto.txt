@@ -1,0 +1,171 @@
+Sprint 2
+
+Nesta Sprint será iniciado o desenvolvimento efetivo dos componentes computacionais do modelo de linguagem.
+
+A partir dos conceitos apresentados no Capítulo 1, o objetivo desta etapa é compreender como um texto é transformado em uma representação numérica que possa ser utilizada como entrada para uma rede neural.
+
+Ao final da Sprint, o grupo deverá ser capaz de explicar e implementar as principais etapas do processamento inicial dos dados de um LLM, incluindo tokenização, construção do vocabulário, conversão para Token IDs, preparação de sequências de treinamento, embeddings, Positional Embeddings e carregamento dos dados para treinamento.
+
+O projeto possui caráter incremental: os componentes desenvolvidos nesta Sprint deverão ser organizados de forma que possam ser posteriormente integrados ao modelo completo. 
+
+1. Leitura orientada
+
+Realize a leitura integral do Capítulo 2 – Working with Text Data, conforme a referência principal do projeto.
+
+Durante a leitura, procure compreender:
+
+    como um texto é dividido em unidades menores;
+    o que é um token;
+    como os tokens são associados a identificadores numéricos;
+    como é construído um vocabulário;
+    como uma sequência de texto é transformada em uma sequência de números;
+    como são formados os pares de entrada e alvo utilizados no treinamento;
+    por que os tokens precisam ser convertidos em vetores;
+    o papel dos embeddings;
+    a necessidade de representar a posição dos tokens;
+    como os dados são organizados para serem fornecidos ao modelo.
+
+A leitura deve priorizar a compreensão da relação entre as diferentes etapas do processamento, e não apenas a reprodução dos códigos apresentados no livro.
+
+2. Glossário técnico
+
+Atualize o Glossário Técnico do Projeto LLM com os conceitos introduzidos no Capítulo 2.
+
+Para cada termo, apresentar:
+
+termo original;
+tradução ou equivalente técnico em português;
+definição;
+função no modelo de linguagem;
+relação com outros conceitos;
+exemplo conceitual ou computacional, quando pertinente.
+
+3. Implementação
+
+A implementação desta Sprint deverá reproduzir o fluxo fundamental:
+
+Texto
+   ↓
+Tokenização
+   ↓
+Tokens
+   ↓
+Token IDs
+   ↓
+Sequências de treinamento
+   ↓
+Embeddings
+   ↓
+Positional Embeddings
+   ↓
+Lote de dados
+   ↓
+Entrada do modelo
+
+
+3.1 Tokenização
+
+Implemente o processo de tokenização utilizado no capítulo.
+
+O código deverá permitir receber um trecho de texto e produzir uma representação baseada nos tokens identificados.
+
+Teste o funcionamento utilizando diferentes frases e observe como a representação textual é modificada.
+
+3.2 Vocabulário e Token IDs
+
+Implemente a associação entre os tokens e seus respectivos identificadores numéricos.
+
+O sistema deverá permitir:
+
+    construir ou utilizar um vocabulário;
+    converter tokens em Token IDs;
+    recuperar tokens a partir dos respectivos IDs;
+    tratar tokens especiais utilizados pelo processo.
+
+O grupo deverá demonstrar que compreende a relação:
+
+Token ↔ Token ID ↔ Vocabulário
+
+
+3.3 Preparação das sequências
+
+Implemente a preparação dos dados para treinamento do modelo.
+
+A partir de uma sequência de tokens, construa as entradas e os respectivos alvos que posteriormente serão utilizados pelo modelo para realizar a previsão do próximo token.
+
+
+3.4 Embeddings
+
+Implemente a transformação dos Token IDs em representações vetoriais.
+
+O grupo deverá observar a dimensão dos vetores produzidos e compreender que os tokens deixam de ser representados apenas como identificadores inteiros e passam a possuir uma representação vetorial que poderá ser processada pelas camadas seguintes da arquitetura.
+
+3.5 Positional Embeddings
+
+Implemente a incorporação da informação de posição dos tokens.
+
+O grupo deverá demonstrar experimentalmente que a representação de um token deve considerar também sua posição dentro da sequência.
+
+3.6 Organização dos dados
+
+Implemente a estrutura necessária para organizar os dados em conjuntos que possam posteriormente ser utilizados durante o treinamento.
+
+Utilize o mecanismo de carregamento de dados apresentado no capítulo, incluindo o DataLoader quando aplicável.
+
+Ao final desta etapa, o grupo deverá possuir uma estrutura capaz de produzir lotes de dados de entrada e seus respectivos alvos.
+
+4. Experimentação
+
+A implementação deverá ser acompanhada de experimentos.
+
+Os experimentos devem permitir observar o impacto de diferentes configurações sobre os dados e suas representações.
+
+Sugere-se investigar, no mínimo:
+
+    diferentes tamanhos de contexto;
+    diferentes tamanhos de lote;
+    diferentes dimensões de embedding;
+    diferentes sequências de entrada;
+    quantidade de tokens produzidos para diferentes textos;
+    relação entre tamanho do contexto e quantidade de amostras;
+    dimensões das estruturas produzidas pelo pipeline.
+
+Os experimentos devem permitir observar alterações no comportamento, desempenho ou custo computacional da solução.
+
+5. Análise dos resultados
+
+Após os experimentos, o grupo deverá elaborar uma análise técnica.
+
+A análise deverá responder, pelo menos, às seguintes questões:
+
+Por que um LLM não pode trabalhar diretamente com o texto bruto?
+Qual é a função do vocabulário?
+Qual é a diferença entre um token e um Token ID?
+Por que os Token IDs não são utilizados diretamente como representação semântica?
+Qual é a função dos embeddings?
+Por que é necessário representar a posição dos tokens?
+Qual é a relação entre tamanho do contexto e quantidade de amostras de treinamento?
+Qual é o impacto da dimensão do embedding sobre as estruturas utilizadas pelo modelo?
+Qual é a função do DataLoader no pipeline?
+Quais informações produzidas nesta Sprint serão utilizadas pelo mecanismo de atenção da Sprint seguinte?
+
+A análise deverá apresentar argumentos técnicos e, sempre que possível, utilizar resultados obtidos nos próprios experimentos.
+
+O documento do projeto estabelece que a análise não deve se limitar à apresentação de código, gráficos ou valores numéricos, devendo relacionar os resultados aos conceitos estudados.
+
+6. Entregáveis
+
+Ao final da Sprint 2, o grupo deverá entregar:
+
+Glossário atualizado do Capítulo 2;
+Código de tokenização;
+Implementação do vocabulário e Token IDs;
+Preparação das sequências de treinamento;
+Implementação dos embeddings;
+Implementação dos Positional Embeddings;
+Estrutura de carregamento dos dados;
+Experimentos realizados;
+Análise dos resultados;
+Código organizado no repositório do projeto.
+
+O repositório deverá permitir acompanhar a evolução do projeto e reproduzir os experimentos realizados, conforme definido no documento do Projeto LLM.

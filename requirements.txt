@@ -10,7 +10,7 @@
 # Nucleo do projeto
 torch>=2.9
 
-# Tokenizacao (Capitulo 2 em diante)
+# Tokenizacao (Capitulo 2 em diante): Byte Pair Encoding (BPE) do GPT-2
 tiktoken>=0.8
 
 # Manipulacao numerica e de dados
@@ -26,6 +26,3 @@ ipykernel>=6.29
 
 # Barras de progresso no treinamento
 tqdm>=4.66
-
-#Byte Pair Encoding (BPE) Tokenizador usado no ChatGpt e outros modelos de linguagem
-tiktoken>=0.8
