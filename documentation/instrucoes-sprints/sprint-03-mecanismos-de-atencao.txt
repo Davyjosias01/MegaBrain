@@ -1,0 +1,46 @@
+sprint 3
+
+esta Sprint será desenvolvido o mecanismo central utilizado pela arquitetura Transformer: o mecanismo de Attention. A partir dos dados preparados na Sprint 2, o grupo deverá compreender como o modelo pode estabelecer relações entre diferentes tokens de uma sequência e utilizar essas relações para construir representações contextuais. A Sprint será desenvolvida de forma incremental, iniciando com o conceito de atenção e avançando para Self-Attention, Scaled Dot-Product Attention, Causal Attention e Multi-Head Attention. Ao final da Sprint, o grupo deverá possuir uma implementação funcional do mecanismo de Multi-Head Attention, que será posteriormente integrado aos blocos Transformer da Sprint 4. Essa etapa é fundamental para a construção progressiva do modelo, pois os mecanismos de atenção serão utilizados posteriormente na arquitetura GPT. 
+
+Glossário técnico
+
+Atualize o glossário cumulativo do projeto com os principais conceitos do Capítulo 3.
+
+Implementação 
+
+Realize a implementação dos mecanismos
+
+    Self-Attention.
+    Scaled Dot-product Attention
+    Causal attention
+    Multi-Head Attention
+
+Experimentação
+
+A Sprint deverá conter experimentos que permitam observar o comportamento do mecanismo de atenção.
+
+Sugestões de experimentos:
+
+    diferentes dimensões de embedding;
+    diferentes números de heads;
+    diferentes dimensões de head;
+    comparação entre Self-Attention e Multi-Head Attention;
+    visualização da matriz de atenção;
+    comparação entre Attention com e sem escala;
+    comportamento da máscara causal;
+    diferentes sequências de entrada.
+
+Entregáveis
+
+Ao final da Sprint 3, deverão ser entregues:
+
+    Glossário atualizado do Capítulo 3;
+    Implementação de Self-Attention;
+    Implementação de Scaled Dot-Product Attention;
+    Implementação de Causal Attention;
+    Implementação de Multi-Head Attention;
+    Experimentos realizados;
+    Visualizações das matrizes de atenção;
+    Análise dos resultados;
+    Código organizado no repositório;
+    Quiz individual.

@@ -20,6 +20,11 @@ duplicar a implementação. Isso mantém uma única fonte de verdade para o cód
 |---|---|---|
 | [`sprint03-mecanismos-de-atencao.ipynb`](sprint03-mecanismos-de-atencao.ipynb) | 3 | Os quatro mecanismos de atenção do Capítulo 3, passo a passo, com os exercícios 3.1, 3.2 e 3.3 |
 
+Os notebooks de leitura das Sprints 1 e 2 ficam em [`sprints/`](../sprints/):
+[`Sprint-1.ipynb`](../sprints/Sprint-1.ipynb) (respostas do Capítulo 1 e do Apêndice A) e
+[`Sprint-2.ipynb`](../sprints/Sprint-2.ipynb) (o Capítulo 2 passo a passo, integrado aos módulos de
+`src/`).
+
 ## Execução
 
 Com o ambiente virtual ativo, a partir da raiz do repositório:

@@ -1,0 +1,34 @@
+configuracao,etapa,forma,tipo,elementos,bytes
+livro (seção 2.8),1. texto bruto,20479 caracteres,str,20479,20479
+livro (seção 2.8),2. tokens,lista de 5145,list[str],5145,20479
+livro (seção 2.8),3. token IDs,lista de 5145,list[int],5145,185276
+livro (seção 2.8),4. amostras (entradas + alvos),"1286 × 2 × (4,)",int64,10288,82304
+livro (seção 2.8),5. lote de entrada,"(8, 4)",int64,32,256
+livro (seção 2.8),6. lote de alvos,"(8, 4)",int64,32,256
+livro (seção 2.8),7. tabela de tokens (pesos),"(50257, 256)",float32,12865792,51463168
+livro (seção 2.8),8. tabela posicional (pesos),"(4, 256)",float32,1024,4096
+livro (seção 2.8),9. embeddings de token,"(8, 4, 256)",float32,8192,32768
+livro (seção 2.8),10. embeddings posicionais,"(4, 256)",float32,1024,4096
+livro (seção 2.8),11. entrada do modelo,"(8, 4, 256)",float32,8192,32768
+experimentos da Sprint 3,1. texto bruto,20479 caracteres,str,20479,20479
+experimentos da Sprint 3,2. tokens,lista de 5145,list[str],5145,20479
+experimentos da Sprint 3,3. token IDs,lista de 5145,list[int],5145,185276
+experimentos da Sprint 3,4. amostras (entradas + alvos),"40 × 2 × (128,)",int64,10240,81920
+experimentos da Sprint 3,5. lote de entrada,"(8, 128)",int64,1024,8192
+experimentos da Sprint 3,6. lote de alvos,"(8, 128)",int64,1024,8192
+experimentos da Sprint 3,7. tabela de tokens (pesos),"(50257, 64)",float32,3216448,12865792
+experimentos da Sprint 3,8. tabela posicional (pesos),"(128, 64)",float32,8192,32768
+experimentos da Sprint 3,9. embeddings de token,"(8, 128, 64)",float32,65536,262144
+experimentos da Sprint 3,10. embeddings posicionais,"(128, 64)",float32,8192,32768
+experimentos da Sprint 3,11. entrada do modelo,"(8, 128, 64)",float32,65536,262144
+GPT-2 small,1. texto bruto,20479 caracteres,str,20479,20479
+GPT-2 small,2. tokens,lista de 5145,list[str],5145,20479
+GPT-2 small,3. token IDs,lista de 5145,list[int],5145,185276
+GPT-2 small,4. amostras (entradas + alvos),"5 × 2 × (1024,)",int64,10240,81920
+GPT-2 small,5. lote de entrada,"(2, 1024)",int64,2048,16384
+GPT-2 small,6. lote de alvos,"(2, 1024)",int64,2048,16384
+GPT-2 small,7. tabela de tokens (pesos),"(50257, 768)",float32,38597376,154389504
+GPT-2 small,8. tabela posicional (pesos),"(1024, 768)",float32,786432,3145728
+GPT-2 small,9. embeddings de token,"(2, 1024, 768)",float32,1572864,6291456
+GPT-2 small,10. embeddings posicionais,"(1024, 768)",float32,786432,3145728
+GPT-2 small,11. entrada do modelo,"(2, 1024, 768)",float32,1572864,6291456

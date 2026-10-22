@@ -1,0 +1,74 @@
+Sprint 0 – Preparação do Ambiente de Desenvolvimento
+
+Esta Sprint tem como objetivo preparar todo o ambiente que será utilizado durante o desenvolvimento do Projeto Integrador de construção de um Large Language Model (LLM). Ao final desta etapa, todos os estudantes deverão possuir o ambiente computacional configurado, o repositório do projeto criado e uma visão geral da arquitetura dos modelos de linguagem que será desenvolvida ao longo do semestre.
+
+Esta Sprint não contempla implementações do modelo propriamente dito, sendo dedicada à organização da infraestrutura necessária para o desenvolvimento das próximas etapas.
+
+Atividades
+
+
+1. Criar o repositório do projeto
+
+Cada dupla deverá criar um repositório (GitHub, GitLab ou plataforma equivalente) que será utilizado durante todo o semestre.
+
+O repositório deverá armazenar todo o desenvolvimento do projeto, incluindo:
+
+    código-fonte;
+    notebooks;
+    glossário técnico;
+    documentação;
+    experimentos;
+    relatórios;
+    resultados obtidos em cada Sprint.
+
+Recomenda-se a utilização de uma estrutura organizada em diretórios, permitindo acompanhar a evolução incremental do projeto.
+
+2. Configurar o ambiente de desenvolvimento
+
+Instalar e validar o ambiente que será utilizado durante todo o semestre.
+
+Ao final desta etapa, todos os integrantes do grupo deverão conseguir executar programas em Python utilizando o PyTorch.
+
+3. Leitura do Capítulo 1
+
+Realizar a leitura integral do Capítulo 1 – Understanding Large Language Models.
+
+Durante a leitura procure responder questões como:
+
+O que caracteriza um Large Language Model?
+Qual a diferença entre IA, Machine Learning e Deep Learning?
+Como os modelos GPT estão organizados?
+Quais são as principais etapas do treinamento de um LLM?
+Qual é o fluxo geral de funcionamento de um modelo de linguagem?
+
+O objetivo desta leitura é compreender a arquitetura geral que será construída durante o semestre.
+
+4. Leitura do Apêndice sobre PyTorch
+
+Realizar a leitura do apêndice do livro dedicado ao PyTorch.
+
+Essa leitura tem como finalidade familiarizar os estudantes com a biblioteca que será utilizada nas implementações desenvolvidas ao longo do projeto.
+
+Durante a leitura procure compreender:
+
+criação de tensores;
+operações básicas;
+manipulação de dimensões;
+operações matriciais;
+funcionamento do autograd;
+construção de modelos utilizando módulos do PyTorch.
+
+Não é necessário memorizar todos os comandos apresentados. O objetivo é compreender a estrutura geral da biblioteca e adquirir familiaridade com sua documentação.
+
+5. Construção do Glossário
+
+Elaborar o glossário correspondente ao Capítulo 1.
+
+Entregáveis
+
+Ao término da Sprint 0, cada grupo deverá entregar:
+
+Link do repositório do projeto, contendo:
+ - Ambiente computacional configurado e funcional.
+ - Arquivo README.md contendo a descrição do projeto.
+ - Glossário do Capítulo 1.

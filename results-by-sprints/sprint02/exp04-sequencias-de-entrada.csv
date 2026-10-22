@@ -1,0 +1,8 @@
+sequencia,caracteres,tokens_simples,desconhecidos_simples,reconstroi_simples,tokens_bpe,reconstroi_bpe,pedacos_simples,pedacos_bpe,ids_bpe
+exemplo do livro,23,7,1,False,7,True,"<|unk|> | , | do | you | like | tea | ?","Hello | , |  do |  you |  like |  tea | ?",15496 11 466 345 588 8887 30
+maiúsculas,26,9,4,False,9,True,The | <|unk|> | . | the | <|unk|> | . | <|unk|> | <|unk|> | .,The |  cat | . |  the |  cat | . |  THE |  CAT | .,464 3797 13 262 3797 13 3336 38348 13
+contração,35,11,0,False,10,True,"It | ' | s | the | last | he | painted | , | you | know | .","It | 's |  the |  last |  he |  painted | , |  you |  know | .",1026 338 262 938 339 13055 11 345 760 13
+fora do corpus,37,8,1,False,10,True,In | the | sunlit | terraces | of | the | <|unk|> | .,In |  the |  sun | lit |  terr | aces |  of |  the |  palace | .,818 262 4252 18250 8812 2114 286 262 20562 13
+português,37,8,5,False,15,True,A | <|unk|> | <|unk|> | <|unk|> | <|unk|> | do | <|unk|> | .,A |  at | en | ç | ão |  é |  o |  cor | a | ç | ão |  do |  Trans | former | .,32 379 268 16175 28749 38251 267 1162 64 16175 28749 466 3602 16354 13
+números,35,8,7,False,14,True,<|unk|> | <|unk|> | <|unk|> | <|unk|> | <|unk|> | <|unk|> | <|unk|> | .,Em |  20 | 26 |  o |  G | PT | - | 2 |  tin | ha |  50 | 257 |  tokens | .,10161 1160 2075 267 402 11571 12 17 19783 3099 2026 28676 16326 13
+espaços,26,4,4,False,12,True,<|unk|> | <|unk|> | <|unk|> | <|unk|>,uma |  lin | ha | \n |   |   |   |  out | ra |   |  lin | ha,7487 9493 3099 198 220 220 220 503 430 220 9493 3099

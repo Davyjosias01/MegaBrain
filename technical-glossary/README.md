@@ -27,10 +27,12 @@ em ordem alfabética dentro de cada arquivo.
 
 | Arquivo | Capítulo | Assunto |
 |---|---|---|
+| [`capitulo-01.md`](capitulo-01.md) | 1 | Introdução aos LLMs: Transformer, GPT, pré-treinamento, fine-tuning e conceitos básicos |
+| [`capitulo-02.md`](capitulo-02.md) | 2 | Processamento de texto: tokenização, vocabulário, BPE, janela deslizante, DataLoader e embeddings |
 | [`capitulo-03.md`](capitulo-03.md) | 3 | Mecanismos de atenção: self-attention, scaled dot-product, causal attention e multi-head attention |
 
-> O glossário do Capítulo 1 encontra-se atualmente em
-> [`documentation/Glossario.docx`](../documentation/Glossario.docx).
+> [`documentation/Glossario.docx`](../documentation/Glossario.docx) guarda as anotações feitas durante
+> a leitura do Capítulo 1. O glossário oficial do capítulo é [`capitulo-01.md`](capitulo-01.md).
 
 ## Critério de avaliação
 

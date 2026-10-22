@@ -19,6 +19,11 @@ __pycache__/
 *.safetensors
 *.bin
 
+# Livro-texto: material protegido por direitos autorais, não deve ser redistribuído
+# em um repositório público. Cada integrante mantém sua cópia local.
+documentation/Build a Large Language Model (From Scratch).pdf
+Building LLMs From Scratch.pdf
+
 # Editores e sistema operacional
 .vscode/
 .idea/

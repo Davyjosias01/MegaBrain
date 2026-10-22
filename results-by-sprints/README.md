@@ -22,6 +22,7 @@ results-by-sprints/
 
 | Diretório | Sprint | Artefatos |
 |---|---|---|
+| [`sprint02/`](sprint02/) | 2 | 8 figuras dos experimentos de processamento de texto, 8 tabelas `.csv` e o log de execução com o ambiente utilizado |
 | [`sprint03/`](sprint03/) | 3 | 13 figuras das matrizes de atenção e dos experimentos, 10 tabelas `.csv` e o log de execução com o ambiente utilizado |
 
 ## Convenções
