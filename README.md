@@ -35,7 +35,7 @@ O projeto é desenvolvido em dupla, mas parte das avaliações (quizzes e argui�
 | Integrante | GitHub |
 |---|---|
 | Davy Josias Scheuermann | [@Davyjosias01](https://github.com/Davyjosias01) |
-| _(preencher o segundo integrante da dupla)_ | |
+| Lucas Tessari De Giacometi | [@LucasTessari](https://github.com/LucasTessari) |
 
 ---
 
@@ -212,7 +212,8 @@ Se todas as verificações forem aprovadas, o ambiente está pronto para as pró
 | Sprint 1 — Capítulo 1 | Concluída |
 | Sprint 2 — Capítulo 2 | Concluída |
 | Sprint 3 — Capítulo 3 | Concluída |
-| Sprints 4 a 6 | Não iniciadas |
+| Sprint 4 — Capítulo 4 | Concluída |
+| Sprints 5 e 6 | Não iniciadas |
 
 As instruções de cada sprint estão em [`documentation/instrucoes-sprints/`](documentation/instrucoes-sprints/).
 
@@ -265,6 +266,28 @@ atenção.
 ```bash
 python src/validar_atencao.py                       # 28 verificações contra o livro
 cd experiments/sprint03-atencao && python executar_todos.py
+```
+
+**Sprint 4 — arquitetura GPT.** LayerNorm, GELU, FeedForward e conexões residuais integrados à
+Multi-Head Attention da Sprint 3 em um Transformer Block; blocos empilhados em um modelo GPT que produz
+logits para o vocabulário; inferência e geração autorregressiva com greedy, temperatura e top-k; oito
+experimentos.
+
+| Entregável | Onde |
+|---|---|
+| 1. Glossário do Capítulo 4 | [`technical-glossary/capitulo-04.md`](technical-glossary/capitulo-04.md) |
+| 2. Transformer Block (LayerNorm, GELU, FeedForward, residuais) | `TransformerBlock` em [`src/gpt.py`](src/gpt.py) |
+| 3. Modelo GPT | `GPTModel` em [`src/gpt.py`](src/gpt.py) |
+| 4. Inferência e geração de texto | [`src/geracao.py`](src/geracao.py) |
+| Validação contra os valores do livro | [`src/validar_gpt.py`](src/validar_gpt.py) |
+| Notebook didático | [`notebook/sprint04-arquitetura-gpt.ipynb`](notebook/sprint04-arquitetura-gpt.ipynb) |
+| 5. Experimentos | [`experiments/sprint04-gpt/`](experiments/sprint04-gpt/) |
+| Figuras e tabelas | [`results-by-sprints/sprint04/`](results-by-sprints/sprint04/) |
+| Documentação e análise | [`reports/sprint04-relatorio.md`](reports/sprint04-relatorio.md) |
+
+```bash
+python src/validar_gpt.py                           # 38 verificações contra o livro
+cd experiments/sprint04-gpt && python executar_todos.py
 ```
 
 ---
