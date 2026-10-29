@@ -19,6 +19,7 @@ duplicar a implementação. Isso mantém uma única fonte de verdade para o cód
 | Arquivo | Sprint | Assunto |
 |---|---|---|
 | [`sprint03-mecanismos-de-atencao.ipynb`](sprint03-mecanismos-de-atencao.ipynb) | 3 | Os quatro mecanismos de atenção do Capítulo 3, passo a passo, com os exercícios 3.1, 3.2 e 3.3 |
+| [`sprint04-arquitetura-gpt.ipynb`](sprint04-arquitetura-gpt.ipynb) | 4 | Do LayerNorm ao modelo GPT completo, com as formas de cada tensor, a inferência passo a passo e temperatura e top-k |
 
 Os notebooks de leitura das Sprints 1 e 2 ficam em [`sprints/`](../sprints/):
 [`Sprint-1.ipynb`](../sprints/Sprint-1.ipynb) (respostas do Capítulo 1 e do Apêndice A) e
