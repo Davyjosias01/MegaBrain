@@ -1,0 +1,39 @@
+Sprint 4
+
+Nesta Sprint, os mecanismos de atenção desenvolvidos na Sprint 3 serão integrados aos demais componentes necessários para construir uma arquitetura GPT simplificada. O objetivo é compreender como os diferentes elementos do Transformer trabalham em conjunto e transformar as implementações anteriores em um modelo capaz de receber uma sequência de tokens e produzir previsões para o próximo token.
+
+A primeira etapa será dedicada à construção do Transformer Block, explorando os conceitos de Layer Normalization, FeedForward Network e conexões residuais. Os estudantes deverão compreender a função de cada componente e sua contribuição para o funcionamento e a estabilidade da arquitetura. A partir desses elementos, será realizada a integração com o mecanismo de Multi-Head Attention desenvolvido na Sprint anterior.
+
+Na segunda etapa, os componentes serão organizados em uma arquitetura GPT, com o empilhamento de múltiplos Transformer Blocks, normalização final e uma camada responsável por produzir os logits associados ao vocabulário. Serão realizados experimentos modificando parâmetros da arquitetura, como dimensão dos embeddings, número de heads, número de blocos e dimensão da rede FeedForward, observando seus efeitos no comportamento e no custo computacional do modelo.
+
+Na etapa final, será implementado o processo de inferência e geração autoregressiva de texto. A partir de uma sequência inicial, o modelo deverá prever o próximo token e utilizá-lo como parte do contexto para realizar novas previsões. Também serão exploradas estratégias de seleção dos tokens e, quando pertinente, parâmetros como temperatura e top-k.
+
+Entregável 1 – Glossário
+
+Atualizar o glossário cumulativo do projeto com os principais conceitos estudados no Capítulo 4, mantendo o padrão adotado nas Sprints anteriores. Devem ser contemplados conceitos como Transformer, Transformer Block, LayerNorm, conexões residuais, FeedForward Network, GELU, Dropout, logits, Language Model Head, inferência e geração autoregressiva.
+
+Para cada conceito, apresentar a definição, sua função no modelo GPT e sua relação com os demais componentes da arquitetura.
+
+Entregável 2 – Implementação do Transformer Block
+
+Implementar o Transformer Block a partir dos componentes desenvolvidos nas Sprints anteriores. A implementação deverá integrar Multi-Head Attention, LayerNorm, FeedForward Network e conexões residuais.
+
+Você deverá documentar a estrutura utilizada e explicar a função de cada componente, incluindo as dimensões dos principais tensores envolvidos.
+
+Entregável 3 – Construção do modelo GPT
+
+Integrar os Transformer Blocks em uma arquitetura GPT simplificada. O modelo deverá utilizar os embeddings e mecanismos de atenção desenvolvidos anteriormente, permitindo o processamento de uma sequência de Token IDs e a produção de logits para o vocabulário.
+
+Deverá ser possível identificar no código a organização dos principais componentes da arquitetura e compreender como eles participam do processamento da sequência.
+
+Entregável 4 – Inferência e geração de texto
+
+Implementar o processo de inferência e geração autoregressiva. A partir de uma sequência inicial, o modelo deverá realizar a previsão do próximo token e utilizar o token produzido para ampliar o contexto e continuar a geração.
+
+Você deverá documentar o procedimento utilizado e explicar a relação entre logits, probabilidades, seleção do próximo token e geração autoregressiva.
+
+Entregável 5 – Experimentação e análise
+
+Realizar experimentos alterando parâmetros da arquitetura ou do processo de geração. Podem ser investigados, por exemplo, o número de Transformer Blocks, número de heads, dimensão dos embeddings, dimensão da FeedForward, dropout, tamanho do contexto e parâmetros de geração.
+
+Para cada experimento, registrar a configuração utilizada, os resultados observados e uma análise que relacione as alterações realizadas ao comportamento do modelo e ao custo computacional.

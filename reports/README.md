@@ -23,6 +23,7 @@ relacionados aos conceitos estudados no capítulo correspondente.
 | [`sprint01-relatorio.md`](sprint01-relatorio.md) | 1 | Introdução aos LLMs: síntese do capítulo e mapa conceitual da arquitetura GPT |
 | [`sprint02-relatorio.md`](sprint02-relatorio.md) | 2 | Processamento de texto: implementação, oito experimentos e respostas às perguntas da sprint |
 | [`sprint03-relatorio.md`](sprint03-relatorio.md) | 3 | Mecanismos de atenção: implementação, oito experimentos e análise |
+| [`sprint04-relatorio.md`](sprint04-relatorio.md) | 4 | Arquitetura GPT: Transformer Block, modelo, inferência e geração, oito experimentos e análise |
 
 ## Convenções
 
