@@ -16,6 +16,7 @@ Um experimento reutiliza os componentes de [`src/`](../src/) e varia apenas o qu
 |---|---|---|
 | [`sprint02-texto/`](sprint02-texto/) | 2 | Oito experimentos sobre o processamento de texto: contexto, lote, dimensão do embedding, sequências e textos diferentes, contexto × amostras, dimensões do pipeline e embeddings posicionais |
 | [`sprint03-atencao/`](sprint03-atencao/) | 3 | Oito experimentos sobre os mecanismos de atenção: dimensões, número e tamanho das cabeças, escala, máscara causal e sequências de entrada |
+| [`sprint04-gpt/`](sprint04-gpt/) | 4 | Oito experimentos sobre a arquitetura GPT e a geração: blocos, heads, dimensão dos embeddings e da FeedForward, dropout, contexto, residuais e LayerNorm, temperatura e top-k |
 
 ## Convenções
 
