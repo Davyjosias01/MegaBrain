@@ -30,7 +30,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ["perda_do_lote", "perda_do_loader", "perplexidade"]
+__all__ = [
+    "perda_do_lote",
+    "perda_do_loader",
+    "perplexidade",
+    "avaliar_modelo",
+    "treinar_modelo",
+]
 
 
 def perda_do_lote(
@@ -97,3 +103,81 @@ def perplexidade(perda: float | torch.Tensor) -> float:
     (50.257 no GPT-2); um modelo perfeito tem perplexidade 1.
     """
     return math.exp(float(perda))
+
+
+# --- Sprint 5: rotina de treinamento (seção 5.2) ------------------------------
+def avaliar_modelo(
+    modelo: nn.Module,
+    loader_treino,
+    loader_validacao,
+    dispositivo: torch.device | str,
+    num_lotes: int | None = None,
+) -> tuple[float, float]:
+    """Perdas de treinamento e de validação — ``evaluate_model`` da seção 5.2."""
+    perda_treino = perda_do_loader(loader_treino, modelo, dispositivo, num_lotes)
+    perda_validacao = perda_do_loader(loader_validacao, modelo, dispositivo, num_lotes)
+    return perda_treino, perda_validacao
+
+
+def treinar_modelo(
+    modelo: nn.Module,
+    loader_treino,
+    loader_validacao,
+    otimizador: torch.optim.Optimizer,
+    dispositivo: torch.device | str,
+    num_epocas: int,
+    frequencia_avaliacao: int = 5,
+    lotes_avaliacao: int | None = 5,
+) -> dict[str, list]:
+    """Laço de treinamento do GPT — ``train_model_simple`` da seção 5.2.
+
+    Para cada época e cada lote de treinamento:
+
+    1. ``otimizador.zero_grad()`` — zera os gradientes do passo anterior;
+    2. ``perda_do_lote`` — passagem direta e entropia cruzada;
+    3. ``perda.backward()`` — retropropagação: gradiente da perda em cada peso;
+    4. ``otimizador.step()`` — atualiza os pesos na direção que reduz a perda.
+
+    A cada ``frequencia_avaliacao`` passos, as perdas de treinamento e de
+    validação são medidas em ``lotes_avaliacao`` lotes e registradas, junto com
+    o número de tokens já vistos — é esse histórico que mostra se o modelo está
+    aprendendo e quando começa o sobreajuste.
+
+    Returns:
+        ``{"passo", "epoca", "tokens_vistos", "perda_treino", "perda_validacao"}``,
+        listas alinhadas, uma entrada por avaliação.
+    """
+    historico: dict[str, list] = {
+        "passo": [],
+        "epoca": [],
+        "tokens_vistos": [],
+        "perda_treino": [],
+        "perda_validacao": [],
+    }
+    tokens_vistos = 0
+    passo = -1
+
+    for epoca in range(1, num_epocas + 1):
+        modelo.train()
+        for entrada, alvo in loader_treino:
+            otimizador.zero_grad()
+            perda = perda_do_lote(entrada, alvo, modelo, dispositivo)
+            perda.backward()
+            otimizador.step()
+            tokens_vistos += entrada.numel()
+            passo += 1
+
+            if passo % frequencia_avaliacao == 0:
+                perda_treino, perda_validacao = avaliar_modelo(
+                    modelo, loader_treino, loader_validacao, dispositivo, lotes_avaliacao
+                )
+                historico["passo"].append(passo)
+                historico["epoca"].append(epoca)
+                historico["tokens_vistos"].append(tokens_vistos)
+                historico["perda_treino"].append(perda_treino)
+                historico["perda_validacao"].append(perda_validacao)
+                print(
+                    f"  época {epoca:>3} | passo {passo:>5} | "
+                    f"perda treino {perda_treino:.3f} | perda validação {perda_validacao:.3f}"
+                )
+    return historico
