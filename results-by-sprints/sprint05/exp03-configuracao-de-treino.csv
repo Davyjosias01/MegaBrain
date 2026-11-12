@@ -1,0 +1,8 @@
+grupo,configuracao,passos,perda_treino,perda_validacao,melhor_validacao,lacuna_val_treino,perplexidade_validacao,tempo_s
+base,"base (lote 2, wd 0,1, dropout 0,1)",180,2.1557,6.1219,6.0716,3.9662,455.7318,16.3650
+lote,lote 1,360,0.4326,6.5496,6.1007,6.1170,698.9613,22.3638
+lote,lote 4,80,4.5584,6.2049,6.2366,1.6464,495.1450,8.8499
+weight decay,weight decay 0,180,2.1001,6.1294,6.0756,4.0293,459.1760,13.5599
+weight decay,"weight decay 0,5",180,2.3781,6.0985,6.0617,3.7205,445.2096,13.6203
+dropout,dropout 0,180,1.3673,6.2301,6.1107,4.8628,507.8194,16.1028
+dropout,"dropout 0,3",180,3.4859,6.1305,6.1254,2.6446,459.6681,16.6503
