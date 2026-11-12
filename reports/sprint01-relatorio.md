@@ -213,7 +213,6 @@ As respostas escritas aos tópicos do apêndice estão no notebook
 | Leitura orientada — respostas às questões do capítulo e do Apêndice A | [`notebook/sprint01-leitura-cap01-apendice-a.ipynb`](../notebook/sprint01-leitura-cap01-apendice-a.ipynb) |
 | Glossário do Capítulo 1 | [`technical-glossary/capitulo-01.md`](../technical-glossary/capitulo-01.md) |
 | Mapa conceitual da arquitetura GPT | seção 3 deste relatório |
-| Tradução manual do capítulo, de apoio à leitura | [`documentation/manual-translation/`](../documentation/manual-translation/) |
 | Ambiente validado | [`src/verificar_ambiente.py`](../src/verificar_ambiente.py) |
 | Quiz 1 | avaliação individual, aplicada pelo componente curricular |
 
