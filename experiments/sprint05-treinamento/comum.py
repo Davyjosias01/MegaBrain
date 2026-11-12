@@ -119,6 +119,7 @@ def treinar_rapido(
         "perda_validacao": perda_validacao,
         "melhor_validacao": min(historico["perda_validacao"]),
         "tempo_s": tempo,
+        "passos": cfg_treino.num_epocas * len(lt),
         "parametros": contar_parametros(modelo),
         "tokens_vistos": historico["tokens_vistos"][-1] if historico["tokens_vistos"] else 0,
     }
