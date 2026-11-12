@@ -24,7 +24,10 @@ inicializado começa.
 
 from __future__ import annotations
 
+import json
 import math
+from dataclasses import asdict, dataclass, fields
+from pathlib import Path
 
 import torch
 import torch.nn as nn
@@ -36,6 +39,7 @@ __all__ = [
     "perplexidade",
     "avaliar_modelo",
     "treinar_modelo",
+    "ConfigTreinamento",
 ]
 
 
@@ -181,3 +185,54 @@ def treinar_modelo(
                     f"perda treino {perda_treino:.3f} | perda validação {perda_validacao:.3f}"
                 )
     return historico
+
+
+# --- Sprint 5: registro da configuração do treinamento -----------------------
+@dataclass
+class ConfigTreinamento:
+    """Parâmetros de um treinamento, registrados para reprodução.
+
+    Os valores padrão são os da seção 5.2 do livro. A configuração da
+    arquitetura (``vocab_size``, ``emb_dim``…) fica no dicionário do modelo
+    (``config_gpt2``); esta classe guarda o que é do *treinamento*.
+    """
+
+    num_epocas: int = 10
+    batch_size: int = 2
+    max_length: int = 256
+    stride: int = 256
+    proporcao_treino: float = 0.9
+    otimizador: str = "AdamW"
+    taxa_aprendizado: float = 4e-4
+    weight_decay: float = 0.1
+    frequencia_avaliacao: int = 5
+    lotes_avaliacao: int = 5
+    semente: int = 123
+    dispositivo: str = "cpu"
+    corpus: str = "sprints/the-verdict.txt"
+
+    def para_dict(self) -> dict:
+        return asdict(self)
+
+    @classmethod
+    def de_dict(cls, dados: dict) -> "ConfigTreinamento":
+        """Reconstrói a configuração, rejeitando campos desconhecidos."""
+        conhecidos = {f.name for f in fields(cls)}
+        desconhecidos = set(dados) - conhecidos
+        if desconhecidos:
+            raise ValueError(f"campos desconhecidos: {sorted(desconhecidos)}")
+        return cls(**dados)
+
+    def salvar_json(self, caminho: Path | str) -> None:
+        Path(caminho).write_text(
+            json.dumps(self.para_dict(), indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+
+    @classmethod
+    def carregar_json(cls, caminho: Path | str) -> "ConfigTreinamento":
+        return cls.de_dict(json.loads(Path(caminho).read_text(encoding="utf-8")))
+
+    def criar_otimizador(self, modelo: nn.Module) -> torch.optim.Optimizer:
+        """Instancia o otimizador registrado, com a taxa e o weight decay da configuração."""
+        classe = getattr(torch.optim, self.otimizador)
+        return classe(modelo.parameters(), lr=self.taxa_aprendizado, weight_decay=self.weight_decay)
