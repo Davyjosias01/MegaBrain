@@ -1,0 +1,36 @@
+{
+  "modelo": {
+    "vocab_size": 50257,
+    "context_length": 256,
+    "emb_dim": 768,
+    "n_heads": 12,
+    "n_layers": 12,
+    "drop_rate": 0.1,
+    "qkv_bias": false
+  },
+  "treino": {
+    "num_epocas": 10,
+    "batch_size": 2,
+    "max_length": 256,
+    "stride": 256,
+    "proporcao_treino": 0.9,
+    "otimizador": "AdamW",
+    "taxa_aprendizado": 0.0004,
+    "weight_decay": 0.1,
+    "frequencia_avaliacao": 5,
+    "lotes_avaliacao": 5,
+    "semente": 123,
+    "dispositivo": "cuda",
+    "corpus": "sprints/the-verdict.txt"
+  },
+  "resumo": {
+    "perda_treino_inicial": 10.98758347829183,
+    "perda_validacao_inicial": 10.98110580444336,
+    "perda_treino_final": 0.8251552250650194,
+    "perda_validacao_final": 6.364306449890137,
+    "perplexidade_treino_final": 2.2822349979116447,
+    "perplexidade_validacao_final": 580.7419149939371,
+    "tempo_treino_s": 49.30409299998428,
+    "tokens_vistos": 44032
+  }
+}
