@@ -1,0 +1,8 @@
+Contexto: 'Every effort moves you' — greedy, 30 tokens, ao fim de cada treino
+
+ 1 épocas: 'Every effort moves you, the,.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"'
+ 3 épocas: 'Every effort moves you the the. the the the the the the the. the. the the the the the. the, the. the. the the the the the'
+ 5 épocas: 'Every effort moves you,,,,.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+10 épocas: 'Every effort moves you, and, and.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+20 épocas: 'Every effort moves you?"\n\n"--as, and I felt a deprec--I turned, and he was, and in: ", my own."\n'
+40 épocas: 'Every effort moves you?"\n\n"Yes--quite insensible to the irony. She wanted him vindicated--and by me!"\n\nHe laughed again, and'
