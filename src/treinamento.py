@@ -24,11 +24,13 @@ inicializado começa.
 
 from __future__ import annotations
 
+import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ["perda_do_lote", "perda_do_loader"]
+__all__ = ["perda_do_lote", "perda_do_loader", "perplexidade"]
 
 
 def perda_do_lote(
@@ -83,3 +85,15 @@ def perda_do_loader(
     finally:
         modelo.train(estava_treinando)
     return soma / num_lotes
+
+
+def perplexidade(perda: float | torch.Tensor) -> float:
+    """Perplexidade correspondente a uma perda de entropia cruzada — seção 5.1.
+
+    ``perplexidade = exp(perda)``. É a mesma informação da perda, numa escala
+    mais fácil de interpretar: o número efetivo de tokens entre os quais o
+    modelo está "em dúvida" a cada previsão. Um modelo que espalha a
+    probabilidade uniformemente pelo vocabulário tem perplexidade igual a ``V``
+    (50.257 no GPT-2); um modelo perfeito tem perplexidade 1.
+    """
+    return math.exp(float(perda))
