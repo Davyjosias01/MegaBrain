@@ -37,7 +37,7 @@ Texto → Tokenização → Tokens → Token IDs → Sequências de treinamento
 | [`src/dados.py`](../src/dados.py) | Corpus, pares entrada/alvo, `GPTDatasetV1` (janela deslizante) e `DataLoader` |
 | [`src/embeddings.py`](../src/embeddings.py) | `EmbeddingDeEntrada`: embedding de token + embedding posicional |
 | [`src/validar_dados.py`](../src/validar_dados.py) | 38 verificações contra os valores do livro e contra as propriedades do pipeline |
-| [`sprints/Sprint-2.ipynb`](../sprints/Sprint-2.ipynb) | Notebook da leitura: o capítulo passo a passo, com saídas executadas |
+| [`notebook/sprint02-processamento-de-texto.ipynb`](../notebook/sprint02-processamento-de-texto.ipynb) | Notebook da leitura: o capítulo passo a passo, com saídas executadas |
 | [`experiments/sprint02-texto/`](../experiments/sprint02-texto/) | Os oito experimentos |
 | [`technical-glossary/capitulo-02.md`](../technical-glossary/capitulo-02.md) | Glossário do capítulo |
 | [`results-by-sprints/sprint02/`](../results-by-sprints/sprint02/) | Figuras, tabelas e log de execução |
@@ -517,7 +517,7 @@ usados, entram na função de perda da Sprint 5.
 | Estrutura de carregamento dos dados | `criar_dataloader` |
 | Experimentos realizados | [`experiments/sprint02-texto/`](../experiments/sprint02-texto/) |
 | Análise dos resultados | este relatório |
-| Código organizado no repositório | `src/`, `sprints/Sprint-2.ipynb`, `experiments/`, `results-by-sprints/` |
+| Código organizado no repositório | `src/`, `notebook/sprint02-processamento-de-texto.ipynb`, `experiments/`, `results-by-sprints/` |
 
 ```bash
 python src/validar_dados.py                          # 38 verificações contra o livro

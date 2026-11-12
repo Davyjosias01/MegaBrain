@@ -12,7 +12,6 @@ glossário consolidado para [`technical-glossary/`](../technical-glossary/).
 |---|---|
 | `Projeto Final - Descrição.pdf` | Especificação oficial da disciplina: objetivos, metodologia, cronograma e critérios de avaliação |
 | [`instrucoes-sprints/`](instrucoes-sprints/) | Instruções de cada sprint, como passadas pelo componente curricular |
-| `ManualTranslation.docx` / `ManualTranslationPDF.pdf` | Tradução manual do Capítulo 1, feita como apoio à leitura orientada |
 | `Glossario.docx` | Anotações de vocabulário feitas durante a leitura do Capítulo 1. O glossário oficial do capítulo é [`technical-glossary/capitulo-01.md`](../technical-glossary/capitulo-01.md) |
 
 ## Livro-texto

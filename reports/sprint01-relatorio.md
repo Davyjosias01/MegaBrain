@@ -191,7 +191,7 @@ exercita exatamente os tópicos do apêndice:
 | rede `Linear(3, 4) → ReLU → Linear(4, 1)` com 21 parâmetros | construção de modelos com `nn.Module` |
 
 As respostas escritas aos tópicos do apêndice estão no notebook
-[`sprints/Sprint-1.ipynb`](../sprints/Sprint-1.ipynb).
+[`notebook/sprint01-leitura-cap01-apendice-a.ipynb`](../notebook/sprint01-leitura-cap01-apendice-a.ipynb).
 
 ---
 
@@ -210,7 +210,7 @@ As respostas escritas aos tópicos do apêndice estão no notebook
 
 | Entregável | Onde |
 |---|---|
-| Leitura orientada — respostas às questões do capítulo e do Apêndice A | [`sprints/Sprint-1.ipynb`](../sprints/Sprint-1.ipynb) |
+| Leitura orientada — respostas às questões do capítulo e do Apêndice A | [`notebook/sprint01-leitura-cap01-apendice-a.ipynb`](../notebook/sprint01-leitura-cap01-apendice-a.ipynb) |
 | Glossário do Capítulo 1 | [`technical-glossary/capitulo-01.md`](../technical-glossary/capitulo-01.md) |
 | Mapa conceitual da arquitetura GPT | seção 3 deste relatório |
 | Tradução manual do capítulo, de apoio à leitura | [`documentation/manual-translation/`](../documentation/manual-translation/) |
