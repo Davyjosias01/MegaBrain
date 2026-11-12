@@ -22,6 +22,7 @@ duplicar a implementação. Isso mantém uma única fonte de verdade para o cód
 | [`sprint02-processamento-de-texto.ipynb`](sprint02-processamento-de-texto.ipynb) | 2 | O Capítulo 2 passo a passo, integrado aos módulos de `src/`; lê o corpus de `sprints/the-verdict.txt` |
 | [`sprint03-mecanismos-de-atencao.ipynb`](sprint03-mecanismos-de-atencao.ipynb) | 3 | Os quatro mecanismos de atenção do Capítulo 3, passo a passo, com os exercícios 3.1, 3.2 e 3.3 |
 | [`sprint04-arquitetura-gpt.ipynb`](sprint04-arquitetura-gpt.ipynb) | 4 | Do LayerNorm ao modelo GPT completo, com as formas de cada tensor, a inferência passo a passo e temperatura e top-k |
+| [`sprint05-treinamento.ipynb`](sprint05-treinamento.ipynb) | 5 | Entropia cruzada à mão, perda e perplexidade, laço de treinamento, sobreajuste, estratégias de geração com e sem treino e checkpoints |
 
 
 ## Execução
@@ -29,5 +30,5 @@ duplicar a implementação. Isso mantém uma única fonte de verdade para o cód
 Com o ambiente virtual ativo, a partir da raiz do repositório:
 
 ```bash
-jupyter lab
+uv run jupyter lab
 ```
