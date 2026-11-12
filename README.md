@@ -129,43 +129,37 @@ Cada diretório possui seu próprio `README.md` descrevendo seu propósito e as 
 
 ### Requisitos
 
-- **Python 3.10 ou superior** (o ambiente atual utiliza Python 3.14.5)
+- **[uv](https://docs.astral.sh/uv/)** — gerenciador de dependências e de ambientes do projeto (a partir da Sprint 5)
+- **Python 3.12 ou superior** (fixado em 3.14 por `.python-version`; o uv instala se faltar)
 - **Git**
-- **PyTorch 2.x** — biblioteca central do projeto
 - GPU NVIDIA com CUDA é opcional, mas acelera significativamente as sprints de treinamento
 
 ### Instalação
-
-Clone o repositório e crie um ambiente virtual isolado:
 
 ```bash
 git clone https://github.com/Davyjosias01/MegaBrain.git
 ```
 
-**Windows (PowerShell):**
-
 ```bash
-python -m venv .venv; .\.venv\Scripts\Activate.ps1
+uv sync
 ```
 
-**Linux / macOS:**
+O `uv sync` cria o ambiente `.venv/` e instala exatamente as versões registradas em `uv.lock`, a partir
+das dependências declaradas em `pyproject.toml` — inclusive o grupo `dev` (JupyterLab, ipykernel,
+nbconvert). No Windows e no Linux o PyTorch vem do índice com **CUDA 12.6**; no macOS, do PyPI.
+
+Os comandos do projeto são executados com `uv run`, sem precisar ativar o ambiente:
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
+uv run python src/validar_gpt.py
 ```
-
-Com o ambiente ativo, instale as dependências:
 
 ```bash
-pip install -r requirements.txt
+uv run jupyter lab
 ```
 
-O arquivo `requirements.txt` instala a build de PyTorch com suporte a **CUDA 12.6**. Em máquinas sem
-GPU NVIDIA, troque o índice do PyTorch pela build de CPU:
-
-```bash
-pip install torch --index-url https://download.pytorch.org/whl/cpu
-```
+Para adicionar uma dependência, use `uv add <pacote>` (ou `uv add --dev <pacote>`), que atualiza o
+`pyproject.toml` e o `uv.lock` juntos.
 
 ### Validação do ambiente
 
@@ -173,7 +167,7 @@ O script abaixo confere a versão do Python, a versão do PyTorch, a disponibili
 uma operação com tensores e uma passagem de *autograd*:
 
 ```bash
-python src/verificar_ambiente.py
+uv run python src/verificar_ambiente.py
 ```
 
 Se todas as verificações forem aprovadas, o ambiente está pronto para as próximas sprints.
