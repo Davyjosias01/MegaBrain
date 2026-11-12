@@ -1,0 +1,138 @@
+
+==========================================================================
+Sprint 5 — execução dos experimentos de treinamento
+==========================================================================
+  data           : 2026-11-12 20:26:41
+  python         : 3.14.5
+  torch          : 2.14.1+cu126
+  dispositivo    : cuda (NVIDIA GeForce GTX 1650)
+  semente        : 123
+  processador    : Intel64 Family 6 Model 165 Stepping 2, GenuineIntel
+  sistema        : Windows-11-10.0.26200-SP0
+
+==========================================================================
+Experimento 01 — número de épocas
+==========================================================================
+  epocas  tokens_vistos  perda_treino  perda_validacao  lacuna_val_treino  perplexidade_validacao  melhor_validacao  tempo_s
+  ------  -------------  ------------  ---------------  -----------------  ----------------------  ----------------  -------
+  1       3072           9.5043        9.6723           0.1680             15872.0144              10.1952           0.9245 
+  3       13312          6.9980        7.3896           0.3916             1619.0333               7.4876            1.9845 
+  5       20992          6.0284        6.6191           0.5907             749.2702                6.6905            3.2508 
+  10      44032          4.8619        6.2838           1.4219             535.8218                6.3007            6.4042 
+  20      90112          2.1557        6.1219           3.9662             455.7318                6.0716            12.8712
+  40      182272         0.0731        6.8299           6.7568             925.1012                6.0716            25.7554
+  tabela -> results-by-sprints/sprint05/exp01-numero-de-epocas.csv
+   1 épocas: 'Every effort moves you, the,.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"'
+   3 épocas: 'Every effort moves you the the. the the the the the the the. the. the the the the the. the, the. the. the the the the the'
+   5 épocas: 'Every effort moves you,,,,.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+  10 épocas: 'Every effort moves you, and, and.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+  20 épocas: 'Every effort moves you?"\n\n"--as, and I felt a deprec--I turned, and he was, and in: ", my own."\n'
+  40 épocas: 'Every effort moves you?"\n\n"Yes--quite insensible to the irony. She wanted him vindicated--and by me!"\n\nHe laughed again, and'
+  figura -> results-by-sprints/sprint05/exp01-numero-de-epocas.png
+
+==========================================================================
+Experimento 02 — taxa de aprendizado
+==========================================================================
+  taxa_aprendizado  perda_treino  perda_validacao  melhor_validacao  perplexidade_validacao  instabilidade  aumentos_da_perda  tempo_s
+  ----------------  ------------  ---------------  ----------------  ----------------------  -------------  -----------------  -------
+  1e-05             10.6243       10.6757          10.6929           43290.1394              0.0146         1                  6.4600 
+  0.0001            7.0224        7.4059           7.5068            1645.6511               0.0445         0                  6.4580 
+  0.0004            4.8619        6.2838           6.3007            535.8218                0.2763         0                  6.4519 
+  0.001             2.7351        6.0917           6.0974            442.1537                0.4709         0                  6.5830 
+  0.003             0.4817        6.8700           6.2458            962.9659                0.7006         0                  6.7134 
+  0.01              5.4791        6.8111           6.7587            907.8975                0.6620         4                  6.9628 
+  tabela -> results-by-sprints/sprint05/exp02-taxa-de-aprendizado.csv
+  figura -> results-by-sprints/sprint05/exp02-taxa-de-aprendizado.png
+
+==========================================================================
+Experimento 03 — configuração do treinamento
+==========================================================================
+  grupo         configuracao                        passos  perda_treino  perda_validacao  melhor_validacao  lacuna_val_treino  perplexidade_validacao  tempo_s
+  ------------  ----------------------------------  ------  ------------  ---------------  ----------------  -----------------  ----------------------  -------
+  base          base (lote 2, wd 0,1, dropout 0,1)  180     2.1557        6.1219           6.0716            3.9662             455.7318                13.1150
+  lote          lote 1                              360     0.4326        6.5496           6.1007            6.1170             698.9613                20.6752
+  lote          lote 4                              80      4.5584        6.2049           6.2366            1.6464             495.1450                8.3730 
+  weight decay  weight decay 0                      180     2.1001        6.1294           6.0756            4.0293             459.1760                12.8477
+  weight decay  weight decay 0,5                    180     2.3781        6.0985           6.0617            3.7205             445.2096                13.0397
+  dropout       dropout 0                           180     1.3673        6.2301           6.1107            4.8628             507.8194                13.0389
+  dropout       dropout 0,3                         180     3.4859        6.1305           6.1254            2.6446             459.6681                13.0106
+  tabela -> results-by-sprints/sprint05/exp03-configuracao-de-treino.csv
+  figura -> results-by-sprints/sprint05/exp03-configuracao-de-treino.png
+
+==========================================================================
+Experimento 04 — tamanho do modelo
+==========================================================================
+  emb_dim  n_layers  n_heads  parametros  pesos_mb  perda_treino  perda_validacao  melhor_validacao  lacuna_val_treino  perplexidade_validacao  tempo_s
+  -------  --------  -------  ----------  --------  ------------  ---------------  ----------------  -----------------  ----------------------  -------
+  64       2         2        6548992     24.9824   7.2620        7.5872           7.7122            0.3252             1972.8406               2.7215 
+  128      2         4        13294592    50.7148   6.0799        6.6292           6.6480            0.5493             756.8692                3.5361 
+  256      4         4        28953600    110.4492  4.8619        6.2838           6.3007            1.4219             535.8218                6.5991 
+  384      6         6        49336320    188.2031  2.8175        6.1554           6.1271            3.3380             471.2640                10.5894
+  512      8         8        76802048    292.9766  2.0405        6.1609           6.1574            4.1204             473.8499                17.0682
+  768      12        12       162419712   619.5820  0.4834        6.3889           6.1125            5.9054             595.1724                37.2071
+  tabela -> results-by-sprints/sprint05/exp04-tamanho-do-modelo.csv
+  figura -> results-by-sprints/sprint05/exp04-tamanho-do-modelo.png
+
+==========================================================================
+Experimento 05 — estratégias de geração (modelo treinado)
+==========================================================================
+  modelo    estrategia                temperatura  top_k  distinct_1  distinct_2  repeticao_3  copia_do_treino_8  textos_distintos
+  --------  ------------------------  -----------  -----  ----------  ----------  -----------  -----------------  ----------------
+  treinado  greedy                    0.0000       -      0.7800      0.9796      0.0000       0.4419             1               
+  treinado  temperatura 0,3           0.3000       -      0.8240      0.9878      0.0000       0.3953             5               
+  treinado  temperatura 0,7           0.7000       -      0.7960      0.9633      0.0167       0.0698             5               
+  treinado  amostragem pura (T=1)     1.0000       -      0.8440      0.9837      0.0042       0.0000             5               
+  treinado  temperatura 1,5           1.5000       -      0.9960      1.0000      0.0000       0.0000             5               
+  treinado  temperatura 3,0           3.0000       -      1.0000      1.0000      0.0000       0.0000             5               
+  treinado  top-k 3                   1.0000       3      0.7760      0.9592      0.0000       0.1209             5               
+  treinado  top-k 10                  1.0000       10     0.7680      0.9592      0.0125       0.1023             5               
+  treinado  top-k 50                  1.0000       50     0.8120      0.9755      0.0042       0.0372             5               
+  treinado  T=1,4 + top-k 25 (livro)  1.4000       25     0.8080      0.9755      0.0042       0.0047             5               
+  tabela -> results-by-sprints/sprint05/exp05-estrategias-de-geracao.csv
+  amostras -> results-by-sprints/sprint05/exp05-amostras.txt
+  [greedy] 'Every effort moves you know," was one of the axioms he had been the tips of a self-confident moustache, I felt to what a smile behind his 
+  [temperatura 0,3] 'Every effort moves you know," was one of the axioms he had been with that point I could have given Miss Croft the fact, had to wh
+  [temperatura 0,7] 'Every effort moves you as studio the millionaire- rather a cheap genius--I looked up his last word.\n\n\n\n\n\n\n" about to see a
+  [amostragem pura (T=1)] 'Every effort moves you as studio the millionaire- rather because he was " absurdity with a curious of a laugh: "poke, andfd
+  [temperatura 1,5] "Every effort moves you as studioBritishrow above meflower BoosterYes-- absurdity reply'ewskiivot a laugh exhibited itpoke terr ri
+  [temperatura 3,0] 'Every effort moves you as studioBritishMaker moderatesadvantflower BoosterYes Participant pleasures reply2015 arrogivot fabric vi
+  [top-k 3] 'Every effort moves you know," was one of the axioms he had been with that point I could have been no great surprise to me to hear that, a
+  [top-k 10] 'Every effort moves you say to the easel- too much a smile that lifted the tips of a self-confident moustache, I saw to what a degree he 
+  [top-k 50] 'Every effort moves you as his pictures with random rather a cheap genius--I looked up that point a laugh: "ident m; and Mrs.\n\n" a smil
+  [T=1,4 + top-k 25 (livro)] 'Every effort moves you of his pictures with random rather a secret was " that with a curious of a laugh: "ident m; and M
+  figura -> results-by-sprints/sprint05/exp05-estrategias-de-geracao.png
+
+==========================================================================
+Experimento 06 — geração × treinamento
+==========================================================================
+  modelo      estrategia                temperatura  top_k  distinct_1  distinct_2  repeticao_3  copia_do_treino_8  textos_distintos
+  ----------  ------------------------  -----------  -----  ----------  ----------  -----------  -----------------  ----------------
+  sem treino  greedy                    0.0000       -      1.0000      1.0000      0.0000       0.0000             1               
+  sem treino  temperatura 0,3           0.3000       -      1.0000      1.0000      0.0000       0.0000             5               
+  sem treino  temperatura 0,7           0.7000       -      1.0000      1.0000      0.0000       0.0000             5               
+  sem treino  amostragem pura (T=1)     1.0000       -      1.0000      1.0000      0.0000       0.0000             5               
+  sem treino  temperatura 1,5           1.5000       -      1.0000      1.0000      0.0000       0.0000             5               
+  sem treino  temperatura 3,0           3.0000       -      1.0000      1.0000      0.0000       0.0000             5               
+  sem treino  top-k 3                   1.0000       3      1.0000      1.0000      0.0000       0.0000             5               
+  sem treino  top-k 10                  1.0000       10     1.0000      1.0000      0.0000       0.0000             5               
+  sem treino  top-k 50                  1.0000       50     1.0000      1.0000      0.0000       0.0000             5               
+  sem treino  T=1,4 + top-k 25 (livro)  1.4000       25     0.9960      1.0000      0.0000       0.0000             5               
+  treinado    greedy                    0.0000       -      0.7800      0.9796      0.0000       0.4419             1               
+  treinado    temperatura 0,3           0.3000       -      0.8240      0.9878      0.0000       0.3953             5               
+  treinado    temperatura 0,7           0.7000       -      0.7960      0.9633      0.0167       0.0698             5               
+  treinado    amostragem pura (T=1)     1.0000       -      0.8440      0.9837      0.0042       0.0000             5               
+  treinado    temperatura 1,5           1.5000       -      0.9960      1.0000      0.0000       0.0000             5               
+  treinado    temperatura 3,0           3.0000       -      1.0000      1.0000      0.0000       0.0000             5               
+  treinado    top-k 3                   1.0000       3      0.7760      0.9592      0.0000       0.1209             5               
+  treinado    top-k 10                  1.0000       10     0.7680      0.9592      0.0125       0.1023             5               
+  treinado    top-k 50                  1.0000       50     0.8120      0.9755      0.0042       0.0372             5               
+  treinado    T=1,4 + top-k 25 (livro)  1.4000       25     0.8080      0.9755      0.0042       0.0047             5               
+  tabela -> results-by-sprints/sprint05/exp06-geracao-vs-treinamento.csv
+  amostras -> results-by-sprints/sprint05/exp06-amostras-sem-treino.txt
+  sem treino [greedy]: ' rentingetic wasnم refres RexMeCHicular stren Mortgage TT remember gard ACTIONSussedOND Land Engeleddedemate breaths proxies G
+  sem treino [temperatura 0,3]: ' 1923 studioesley logged KelvinBlackensingAuthor33 bere Sun Rocks2015ewskimir fabric alternate supp personalities ech
+  sem treino [temperatura 0,7]: ' 1923 foolishBritish Sad moderatesadvantflower Booster Malone Participant pleasures Rocks2015ewski Jolly fabric villa
+  figura -> results-by-sprints/sprint05/exp06-geracao-vs-treinamento.png
+
+  tempo total: 445.8 s
+  artefatos em results-by-sprints/sprint05/
