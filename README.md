@@ -114,7 +114,7 @@ Toda sprint segue o mesmo ciclo de trabalho, definido pelo componente curricular
 |---|---|
 | [`src/`](src/) | Código-fonte dos componentes do LLM (tokenizador, embeddings, atenção, blocos Transformer, modelo GPT, treinamento) |
 | [`notebook/`](notebook/) | Notebooks Jupyter de exploração, demonstração e visualização de cada etapa |
-| [`sprints/`](sprints/) | Notebooks de leitura das Sprints 1 e 2 e o corpus `the-verdict.txt` usado desde a Sprint 2 |
+| [`sprints/`](sprints/) | Corpus `the-verdict.txt`, usado desde a Sprint 2 |
 | [`technical-glossary/`](technical-glossary/) | Glossário técnico cumulativo, organizado por capítulo |
 | [`documentation/`](documentation/) | Material de referência: descrição do projeto, instruções de cada sprint e documentos de apoio |
 | [`experiments/`](experiments/) | Experimentos de variação de parâmetros, configurações e dados |
@@ -219,13 +219,13 @@ As instruções de cada sprint estão em [`documentation/instrucoes-sprints/`](d
 
 **Sprint 0 — preparação do ambiente.** Repositório, ambiente validado por
 [`src/verificar_ambiente.py`](src/verificar_ambiente.py) e leitura do Apêndice A (PyTorch), com
-respostas em [`sprints/Sprint-1.ipynb`](sprints/Sprint-1.ipynb).
+respostas em [`notebook/sprint01-leitura-cap01-apendice-a.ipynb`](notebook/sprint01-leitura-cap01-apendice-a.ipynb).
 
 **Sprint 1 — introdução aos LLMs.**
 
 | Entregável | Onde |
 |---|---|
-| Respostas da leitura do Capítulo 1 e do Apêndice A | [`sprints/Sprint-1.ipynb`](sprints/Sprint-1.ipynb) |
+| Respostas da leitura do Capítulo 1 e do Apêndice A | [`notebook/sprint01-leitura-cap01-apendice-a.ipynb`](notebook/sprint01-leitura-cap01-apendice-a.ipynb) |
 | Mapa conceitual da arquitetura GPT | [`reports/sprint01-relatorio.md`](reports/sprint01-relatorio.md) |
 | Glossário do Capítulo 1 | [`technical-glossary/capitulo-01.md`](technical-glossary/capitulo-01.md) |
 
@@ -238,7 +238,7 @@ pares entrada/alvo, DataLoader e embeddings de token e posicionais, com oito exp
 | Sequências de treinamento e DataLoader | [`src/dados.py`](src/dados.py) |
 | Embeddings de token e posicionais | [`src/embeddings.py`](src/embeddings.py) |
 | Validação contra os valores do livro | [`src/validar_dados.py`](src/validar_dados.py) |
-| Notebook da leitura, com saídas executadas | [`sprints/Sprint-2.ipynb`](sprints/Sprint-2.ipynb) |
+| Notebook da leitura, com saídas executadas | [`notebook/sprint02-processamento-de-texto.ipynb`](notebook/sprint02-processamento-de-texto.ipynb) |
 | Experimentos | [`experiments/sprint02-texto/`](experiments/sprint02-texto/) |
 | Figuras e tabelas | [`results-by-sprints/sprint02/`](results-by-sprints/sprint02/) |
 | Análise dos resultados | [`reports/sprint02-relatorio.md`](reports/sprint02-relatorio.md) |
