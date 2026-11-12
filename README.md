@@ -207,7 +207,8 @@ Se todas as verificações forem aprovadas, o ambiente está pronto para as pró
 | Sprint 2 — Capítulo 2 | Concluída |
 | Sprint 3 — Capítulo 3 | Concluída |
 | Sprint 4 — Capítulo 4 | Concluída |
-| Sprints 5 e 6 | Não iniciadas |
+| Sprint 5 — Capítulo 5 | Concluída |
+| Sprint 6 | Não iniciada |
 
 As instruções de cada sprint estão em [`documentation/instrucoes-sprints/`](documentation/instrucoes-sprints/).
 
@@ -282,6 +283,35 @@ experimentos.
 ```bash
 python src/validar_gpt.py                           # 38 verificações contra o livro
 cd experiments/sprint04-gpt && python executar_todos.py
+```
+
+**Sprint 5 — treinamento e avaliação.** Perda de entropia cruzada e perplexidade sobre os conjuntos de
+treino e validação, laço de treinamento com AdamW, treino do GPT-2 124M (perda de treino 10,99 → 0,83 em
+10 épocas, com sobreajuste visível na validação), seis experimentos de treinamento e geração e
+salvamento/carregamento de checkpoints. A partir desta sprint, os comandos usam o uv.
+
+| Entregável | Onde |
+|---|---|
+| 1. Glossário do Capítulo 5 | [`technical-glossary/capitulo-05.md`](technical-glossary/capitulo-05.md) |
+| 2. Avaliação (entropia cruzada, perplexidade, treino/validação) | [`src/treinamento.py`](src/treinamento.py), [`src/dados.py`](src/dados.py) |
+| 3. Rotina de treinamento | `treinar_modelo` em [`src/treinamento.py`](src/treinamento.py); [`treinar_base.py`](experiments/sprint05-treinamento/treinar_base.py) |
+| 4 e 5. Experimentos de treinamento e de geração | [`experiments/sprint05-treinamento/`](experiments/sprint05-treinamento/) |
+| 6. Salvamento e carregamento dos pesos | [`src/checkpoint.py`](src/checkpoint.py) — procedimento no [README dos experimentos](experiments/sprint05-treinamento/README.md#salvamento-e-carregamento-dos-pesos) |
+| Validação | [`src/validar_treinamento.py`](src/validar_treinamento.py) |
+| Notebook didático | [`notebook/sprint05-treinamento.ipynb`](notebook/sprint05-treinamento.ipynb) |
+| Perdas, amostras, figuras e tabelas | [`results-by-sprints/sprint05/`](results-by-sprints/sprint05/) |
+| 7. Documentação e análise | [`reports/sprint05-relatorio.md`](reports/sprint05-relatorio.md) |
+
+```bash
+uv run python src/validar_treinamento.py                       # 27 verificações
+```
+
+```bash
+uv run python experiments/sprint05-treinamento/treinar_base.py   # treino base + checkpoint
+```
+
+```bash
+cd experiments/sprint05-treinamento && uv run python executar_todos.py
 ```
 
 ---

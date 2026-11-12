@@ -25,6 +25,7 @@ results-by-sprints/
 | [`sprint02/`](sprint02/) | 2 | 8 figuras dos experimentos de processamento de texto, 8 tabelas `.csv` e o log de execução com o ambiente utilizado |
 | [`sprint03/`](sprint03/) | 3 | 13 figuras das matrizes de atenção e dos experimentos, 10 tabelas `.csv` e o log de execução com o ambiente utilizado |
 | [`sprint04/`](sprint04/) | 4 | 8 figuras dos experimentos da arquitetura GPT e da geração, 10 tabelas `.csv` e o log de execução com o ambiente e a configuração-base |
+| [`sprint05/`](sprint05/) | 5 | Treino base (configuração, histórico de perdas e perplexidades, amostras por época, curvas e log), 6 figuras e 6 tabelas dos experimentos, amostras de geração e o log de execução. O checkpoint `base-modelo.pt` (1,95 GB) não é versionado |
 
 ## Convenções
 

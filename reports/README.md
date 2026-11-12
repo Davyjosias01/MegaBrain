@@ -24,6 +24,7 @@ relacionados aos conceitos estudados no capítulo correspondente.
 | [`sprint02-relatorio.md`](sprint02-relatorio.md) | 2 | Processamento de texto: implementação, oito experimentos e respostas às perguntas da sprint |
 | [`sprint03-relatorio.md`](sprint03-relatorio.md) | 3 | Mecanismos de atenção: implementação, oito experimentos e análise |
 | [`sprint04-relatorio.md`](sprint04-relatorio.md) | 4 | Arquitetura GPT: Transformer Block, modelo, inferência e geração, oito experimentos e análise |
+| [`sprint05-relatorio.md`](sprint05-relatorio.md) | 5 | Treinamento e avaliação: perda, perplexidade, treino base, seis experimentos, sobreajuste, estratégias de geração e checkpoints |
 
 ## Convenções
 

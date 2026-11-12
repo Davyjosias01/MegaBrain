@@ -21,6 +21,9 @@ experimentos consomem estes módulos, nunca o contrário.
 | `gpt.py` | **Sprint 4** — `LayerNorm`, `GELU`, `FeedForward`, `TransformerBlock` e `GPTModel` (reaproveita `EmbeddingDeEntrada` e `MultiHeadAttention`); configurações do GPT-2 (`CONFIG_GPT2_124M`, `config_gpt2`) e contagem de parâmetros e memória |
 | `geracao.py` | **Sprint 4** — inferência e geração autorregressiva: `texto_para_ids`, `ids_para_texto`, `selecionar_proximo_token` (greedy, temperatura, top-k), `gerar` e `gerar_texto_simples` |
 | `validar_gpt.py` | **Sprint 4** — 38 verificações da arquitetura e da geração contra os valores do Capítulo 4 e da seção 5.3 |
+| `treinamento.py` | **Sprint 5** — avaliação e treino: `perda_do_lote`, `perda_do_loader`, `perplexidade`, `avaliar_modelo`, `treinar_modelo`, `gerar_amostra` e `ConfigTreinamento` (parâmetros do treino em JSON) |
+| `checkpoint.py` | **Sprint 5** — `salvar_checkpoint`, `carregar_checkpoint` e `retomar_treinamento`: pesos, estado do AdamW, configurações e histórico num único `.pt` |
+| `validar_treinamento.py` | **Sprint 5** — 27 verificações da avaliação, do treino e dos checkpoints |
 
 ## Organização prevista
 
@@ -29,16 +32,17 @@ Conforme as sprints avançam, o diretório receberá os módulos correspondentes
 - **Sprint 2** *(concluída)* — tokenização, vocabulário, dataset e *dataloader*, *embeddings* e *positional embeddings*
 - **Sprint 3** *(concluída)* — mecanismos de atenção: *self-attention*, *scaled dot-product*, *causal* e *multi-head*
 - **Sprint 4** *(concluída)* — arquitetura GPT: *layer normalization*, *feed forward network*, conexões residuais e blocos Transformer
-- **Sprint 5** — laço de treinamento, função de perda, otimizadores e geração de texto
+- **Sprint 5** *(concluída)* — função de perda, perplexidade, laço de treinamento, otimizador e checkpoints; `dados.py` ganha a divisão treino/validação
 - **Sprint 6** — estratégias de *fine-tuning*
 
 ## Execução
 
-Com o ambiente virtual ativo, a partir da raiz do repositório:
+A partir da raiz do repositório, com o ambiente do uv (`uv sync`):
 
 ```bash
-python src/verificar_ambiente.py   # valida o ambiente (Sprint 0)
-python src/validar_dados.py        # valida o pipeline de dados (Sprint 2)
-python src/validar_atencao.py      # valida os mecanismos de atenção (Sprint 3)
-python src/validar_gpt.py          # valida a arquitetura GPT e a geração (Sprint 4)
+uv run python src/verificar_ambiente.py      # valida o ambiente (Sprint 0)
+uv run python src/validar_dados.py           # valida o pipeline de dados (Sprint 2)
+uv run python src/validar_atencao.py         # valida os mecanismos de atenção (Sprint 3)
+uv run python src/validar_gpt.py             # valida a arquitetura GPT e a geração (Sprint 4)
+uv run python src/validar_treinamento.py     # valida a avaliação, o treino e os checkpoints (Sprint 5)
 ```
