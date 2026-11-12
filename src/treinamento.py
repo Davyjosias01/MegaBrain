@@ -28,7 +28,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ["perda_do_lote"]
+__all__ = ["perda_do_lote", "perda_do_loader"]
 
 
 def perda_do_lote(
@@ -47,3 +47,39 @@ def perda_do_lote(
     alvo = alvo.to(dispositivo)
     logits = modelo(entrada)  # (b, L, V)
     return F.cross_entropy(logits.flatten(0, 1), alvo.flatten())
+
+
+def perda_do_loader(
+    loader,
+    modelo: nn.Module,
+    dispositivo: torch.device | str,
+    num_lotes: int | None = None,
+) -> float:
+    """Perda média sobre os lotes de um DataLoader — ``calc_loss_loader`` da seção 5.1.
+
+    Usada para avaliar o modelo nos conjuntos de treinamento e de validação.
+    Roda em modo de avaliação (sem dropout) e sem calcular gradientes; o modo
+    anterior do modelo é restaurado ao final.
+
+    ``num_lotes`` limita a avaliação aos primeiros lotes, o que torna a
+    avaliação periódica durante o treinamento mais barata. Se for maior que o
+    número de lotes disponíveis, todos são usados. Um loader vazio devolve
+    ``nan``, já que não há média a calcular.
+    """
+    total_lotes = len(loader)
+    if total_lotes == 0:
+        return float("nan")
+    num_lotes = total_lotes if num_lotes is None else min(num_lotes, total_lotes)
+
+    estava_treinando = modelo.training
+    modelo.eval()
+    soma = 0.0
+    try:
+        with torch.no_grad():
+            for i, (entrada, alvo) in enumerate(loader):
+                if i >= num_lotes:
+                    break
+                soma += perda_do_lote(entrada, alvo, modelo, dispositivo).item()
+    finally:
+        modelo.train(estava_treinando)
+    return soma / num_lotes
