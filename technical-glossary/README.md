@@ -31,6 +31,7 @@ em ordem alfabética dentro de cada arquivo.
 | [`capitulo-02.md`](capitulo-02.md) | 2 | Processamento de texto: tokenização, vocabulário, BPE, janela deslizante, DataLoader e embeddings |
 | [`capitulo-03.md`](capitulo-03.md) | 3 | Mecanismos de atenção: self-attention, scaled dot-product, causal attention e multi-head attention |
 | [`capitulo-04.md`](capitulo-04.md) | 4 | Arquitetura GPT: Transformer Block, LayerNorm, conexões residuais, FeedForward, GELU, logits, geração autorregressiva, temperatura e top-k |
+| [`capitulo-05.md`](capitulo-05.md) | 5 | Treinamento e avaliação: entropia cruzada, perplexidade, laço de treinamento, AdamW, taxa de aprendizado, weight decay, sobreajuste, estratégias de decodificação e checkpoints |
 
 > [`documentation/Glossario.docx`](../documentation/Glossario.docx) guarda as anotações feitas durante
 > a leitura do Capítulo 1. O glossário oficial do capítulo é [`capitulo-01.md`](capitulo-01.md).
