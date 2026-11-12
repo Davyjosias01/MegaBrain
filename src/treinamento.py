@@ -33,12 +33,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from geracao import gerar, ids_para_texto, texto_para_ids
+from tokenizacao import TokenizadorBPE
+
 __all__ = [
     "perda_do_lote",
     "perda_do_loader",
     "perplexidade",
     "avaliar_modelo",
     "treinar_modelo",
+    "gerar_amostra",
     "ConfigTreinamento",
 ]
 
@@ -132,6 +136,9 @@ def treinar_modelo(
     num_epocas: int,
     frequencia_avaliacao: int = 5,
     lotes_avaliacao: int | None = 5,
+    contexto_inicial: str | None = None,
+    tokenizador=None,
+    tokens_amostra: int = 50,
 ) -> dict[str, list]:
     """Laço de treinamento do GPT — ``train_model_simple`` da seção 5.2.
 
@@ -147,9 +154,14 @@ def treinar_modelo(
     o número de tokens já vistos — é esse histórico que mostra se o modelo está
     aprendendo e quando começa o sobreajuste.
 
+    Se ``contexto_inicial`` for dado, ao fim de cada época o modelo gera
+    ``tokens_amostra`` tokens a partir dele (``gerar_amostra``, greedy). Usar
+    sempre o mesmo contexto torna as amostras comparáveis entre épocas.
+
     Returns:
         ``{"passo", "epoca", "tokens_vistos", "perda_treino", "perda_validacao"}``,
-        listas alinhadas, uma entrada por avaliação.
+        listas alinhadas, uma entrada por avaliação; e ``"amostras"``, uma
+        entrada por época (vazia se não houver ``contexto_inicial``).
     """
     historico: dict[str, list] = {
         "passo": [],
@@ -157,6 +169,7 @@ def treinar_modelo(
         "tokens_vistos": [],
         "perda_treino": [],
         "perda_validacao": [],
+        "amostras": [],
     }
     tokens_vistos = 0
     passo = -1
@@ -184,7 +197,41 @@ def treinar_modelo(
                     f"  época {epoca:>3} | passo {passo:>5} | "
                     f"perda treino {perda_treino:.3f} | perda validação {perda_validacao:.3f}"
                 )
+
+        if contexto_inicial is not None:
+            amostra = gerar_amostra(
+                modelo, contexto_inicial, dispositivo, tokenizador, tokens_amostra
+            )
+            historico["amostras"].append(amostra)
+            print(f"  amostra (época {epoca}): {amostra!r}")
     return historico
+
+
+def gerar_amostra(
+    modelo: nn.Module,
+    contexto_inicial: str,
+    dispositivo: torch.device | str,
+    tokenizador=None,
+    max_novos_tokens: int = 50,
+) -> str:
+    """Gera texto greedy a partir de ``contexto_inicial`` — ``generate_and_print_sample``.
+
+    Coloca o modelo em ``eval()`` (sem dropout) para gerar e restaura o modo
+    anterior ao final, para não interferir no treinamento.
+    """
+    tokenizador = tokenizador or TokenizadorBPE()
+    estava_treinando = modelo.training
+    modelo.eval()
+    try:
+        ids = texto_para_ids(contexto_inicial, tokenizador).to(dispositivo)
+        with torch.no_grad():
+            saida = gerar(
+                modelo, ids, max_novos_tokens=max_novos_tokens,
+                tamanho_contexto=modelo.cfg["context_length"], temperatura=0.0,
+            )
+    finally:
+        modelo.train(estava_treinando)
+    return ids_para_texto(saida, tokenizador)
 
 
 # --- Sprint 5: registro da configuração do treinamento -----------------------
