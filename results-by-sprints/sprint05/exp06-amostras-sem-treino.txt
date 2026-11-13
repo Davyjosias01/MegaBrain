@@ -1,0 +1,33 @@
+Estratégias de geração — mesmo modelo, pesos aleatórios (sem treino)
+Contexto: 'Every effort moves you', 50 tokens, semente 123
+
+[greedy]
+Every effort moves you rentingetic wasnم refres RexMeCHicular stren Mortgage TT remember gard ACTIONSussedOND Land Engeleddedemate breaths proxies GalaxyForm therapies drying consultants FrazierVPN inhib prerequisite suralianlyakpotion shapes tabloid Roboticstw pronoun Primary Flame779 enumDet Valent pseudo peskyarp
+
+[temperatura 0,3]
+Every effort moves you 1923 studioesley logged KelvinBlackensingAuthor33 bere Sun Rocks2015ewskimir fabric alternate supp personalities echoing scenarios righteousidental avalanchewiarianoffensive KosovoshedWinner electro len postp SIG businessmenmultipl breathtaking Perspective cess GlIFF bury weighing receptors acron Lau incom Cooper classmates meditation
+
+[temperatura 0,7]
+Every effort moves you 1923 foolishBritish Sad moderatesadvantflower Booster Malone Participant pleasures Rocks2015ewski Jolly fabric villain exhibited sword pelranch righteousfd flash anklemania Rosesimilar SocialWinnerTextures len postp 1440 businessmenmultipl breathtaking Perspective cess Glَandr weighing receptors jogStrengthargument Yet Wildlife Islam
+
+[amostragem pura (T=1)]
+Every effort moves you 1923 foolishBritish Sad moderatesadvantflower Booster Malone Participant pleasures Rocks2015ewskiivot fabric villain exhibited sword pelranch righteousfd flash anklemania Rosesimilar SocialWinnerTextures len postp 1440 businessmenmultipl breathtaking Dwight cess Glَandr weighing receptors jogStrength Cyrus Yet Wildlife Islam
+
+[temperatura 1,5]
+Every effort moves you 1923 foolishBritish Sad moderatesadvantflower Booster complying Participant pleasures Rocks2015 arrogivot fabric villain exhibited sword pelranch righteousfd luck rowmania Rosesimilar SocialWinnerTextures len postp 1440 businessmenmultipl intent Perspective cess Glَandr weighing receptors jogStrength Cyrus Yet Wildlife Islam
+
+[temperatura 3,0]
+Every effort moves you 1923 foolishBritish Sad moderatesadvantflower Booster enormous Participant pleasures reply2015 arrogivot fabric villain exhibited sword pelranch righteousfd luck rowmania Rosesimilar SocialWinnerTextures len postp 1440 businessmenmultipl intent concerns cess Glَ commuters weighing receptors jog shuff Cyrus Yet Wildlife Islam
+
+[top-k 3]
+Every effort moves you renting priesthood Defensiveم Superman communities Observatory unexpectedly33termshern pasture impeCategoryetimeObject explaining Mariaaretprogress pron LIN Factor esteemed alarmedrones endure stimulates reports eliminatesPlexox podcast evening inquireUrl Rodriguezumblingaji luglin dismantling barely optimal neuroscience caching ," production Parish//
+
+[top-k 10]
+Every effort moves you ivakuyaReader cones monitormbudsman bear Krug revolves sharperInvalid satisfies Telegram Riding disputed rescued dwindreekckomares adapting ballot explosionsRadioBrtw Chat consultants tossing five construed Rudolph jail spitecus trendy 275 Repe handful promptnets Directoryrene008endiaryogene ether Numbers Weekend lenders
+
+[top-k 50]
+Every effort moves youood nieceadena Rumble Holl Pentagon bear Krug revolves crimełcellaneous Shields conting confrontObjectpasUnityaternity bridge adapting PRESADEGermanyPeniosityと initiate emerges REALTargetspecified Ethernetremember 500 Dana [/ consequently Ranked envyossus irrit SyndicateresourceewskiInsSeanbertド electron
+
+[T=1,4 + top-k 25 (livro)]
+Every effort moves youood Extended prosecut dialoooooooo facility bear Krug revolves remotelyFontcellaneousrador conting folded mockedrestling people warp twitter serpentMatLic Trad Jeep Pebble eSports Hak ordered maturedstarterTOR Jas expression FengladenKyleβ fulfilling promptnets Directory responds likewise victimized intuition weddingsgi avenues mortal
+

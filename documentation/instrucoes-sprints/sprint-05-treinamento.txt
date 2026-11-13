@@ -1,0 +1,32 @@
+Sprint 5 – Treinamento e avaliação do modelo (Capítulo 5)
+Entrega até 12/11/2026
+
+Entregável 1 – Glossário
+Atualizar o glossário cumulativo com os conceitos relacionados ao treinamento e à avaliação de modelos de linguagem. Para cada termo, apresentar sua definição, função no treinamento e relação com os demais componentes do modelo.
+
+Entregável 2 – Avaliação do modelo
+Implementar a avaliação quantitativa do modelo GPT utilizando a perda (loss) calculada sobre os dados. Você deverá compreender como a cross-entropy loss mede a diferença entre as previsões do modelo e os tokens esperados, além de calcular as perdas dos conjuntos de treinamento e validação.
+Também deverá investigar a métrica perplexity e sua relação com a capacidade do modelo de prever os próximos tokens. Os resultados devem ser registrados e interpretados, considerando o estado inicial do modelo e sua evolução durante o treinamento.
+
+Entregável 3 – Implementação do treinamento
+Implementar a rotina de treinamento do GPT utilizando PyTorch. A implementação deverá contemplar a iteração por épocas e lotes, o cálculo da função de perda, a retropropagação dos gradientes e a atualização dos pesos do modelo por meio de um otimizador, conforme apresentado no capítulo.
+Você deverá registrar os parâmetros utilizados, como número de épocas, tamanho dos lotes, taxa de aprendizado e configuração do otimizador. Também deverá acompanhar as perdas de treinamento e validação durante a execução, verificando se o modelo está efetivamente aprendendo a tarefa de previsão do próximo token.
+
+Entregável 4 – Experimentos de treinamento
+Realizar experimentos modificando parâmetros do treinamento e analisar seus efeitos sobre a convergência, a qualidade dos textos gerados e o custo computacional. Devem ser considerados, conforme os recursos disponíveis, diferentes números de épocas, taxas de aprendizado e configurações de treinamento.
+A análise deverá comparar os resultados obtidos, identificar possíveis sinais de sobreajuste e discutir as diferenças entre o comportamento observado nos dados de treinamento e nos dados de validação.
+
+Entregável 5 – Estratégias de geração de texto
+Investigar estratégias de decodificação para controlar a seleção dos próximos tokens durante a geração. O trabalho deverá comparar a seleção do token com maior probabilidade (greedy decoding) com a amostragem probabilística e explorar os efeitos da temperatura e do top-k sampling.
+Deve-se utilizar o mesmo contexto inicial para comparar as saídas produzidas, documentando as diferenças de diversidade, repetição e coerência. A análise deverá distinguir os efeitos das estratégias de geração daqueles decorrentes do treinamento dos pesos do modelo.
+
+Entregável 6 – Salvamento e carregamento dos pesos
+Implementar o salvamento e o carregamento dos pesos do modelo, permitindo preservar o estado obtido ao final do treinamento e retomar o trabalho posteriormente. O estudante deverá demonstrar que o modelo carregado consegue realizar inferência e gerar texto utilizando os parâmetros salvos.
+O procedimento deverá ser documentado no repositório, incluindo as informações necessárias para identificar a configuração do modelo e reproduzir os experimentos.
+
+Entregável 7 – Documentação técnica
+Consolidar no repositório os códigos de treinamento e avaliação, os experimentos realizados, os registros das perdas, as amostras de texto geradas e as conclusões obtidas. O relatório deverá explicar as configurações utilizadas, apresentar os resultados quantitativos e qualitativos e discutir as limitações do treinamento realizado.
+A documentação deve permitir compreender o processo de treinamento e reproduzir os principais experimentos.
+
+Observação: os "dados" citados no enunciado são um link para uma pasta no ambiente virtual da UNOESC
+(on.unoesc.edu.br/mod/folder/view.php?id=147189), que exige login.
