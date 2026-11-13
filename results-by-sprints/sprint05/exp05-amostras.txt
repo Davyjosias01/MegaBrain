@@ -1,0 +1,44 @@
+Estratégias de geração — modelo treinado (treino base)
+Contexto: 'Every effort moves you', 50 tokens, semente 123
+
+[greedy]
+Every effort moves you know," was one of the axioms he had been the tips of a self-confident moustache, I felt to what a smile behind his close grayish beard--as if he had the, a fashionable painter--that I had
+
+[temperatura 0,3]
+Every effort moves you know," was one of the axioms he had been with that point I could have given Miss Croft the fact, had to what a smile behind his close grayish beard--as if he had the, my eye fell on a small picture
+
+[temperatura 0,7]
+Every effort moves you as studio the millionaire- rather a cheap genius--I looked up his last word.
+
+
+
+
+
+
+" about to see a smile behind his art and my unexpected discovery; and continued to see things, and were amusing himself by holding
+
+[amostragem pura (T=1)]
+Every effort moves you as studio the millionaire- rather because he was " absurdity with a curious of a laugh: "poke, andfd flash I blocked the usual,Winner. Gisburn, he had dropped like with paint was things, youication. He says they
+
+[temperatura 1,5]
+Every effort moves you as studioBritishrow above meflower BoosterYes-- absurdity reply'ewskiivot a laugh exhibited itpoke terr righteousfd flash anklemania Rosesimilar.WinnerTextures flowers postp Jack businessmenmultipl waves under like Glinteresting commuters things receptors moanmateYes is Wildlife fond
+
+[temperatura 3,0]
+Every effort moves you as studioBritishMaker moderatesadvantflower BoosterYes Participant pleasures reply2015 arrogivot fabric villain exhibited sword pelranch righteousfd flashwimania Rosesimilar SocialWinnerTextures len postp 1440 businessmenmultipl intent concerns cess Glinteresting commuters things receptors jogication Cyrus Yet Wildlife fond
+
+[top-k 3]
+Every effort moves you know," was one of the axioms he had been with that point I could have been no great surprise to me to hear that, a degree he had the same quality as his pictures--the quality of his ease--because he had always get
+
+[top-k 10]
+Every effort moves you say to the easel- too much a smile that lifted the tips of a self-confident moustache, I saw to what a degree he had the same quality as his pictures--the quality of Jack's "There were days, his
+
+[top-k 50]
+Every effort moves you as his pictures with random rather a cheap genius--I looked up that point a laugh: "ident m; and Mrs.
+
+" a smile behind his art Jack himself, you was one had you say, my way of the firstrecating
+
+[T=1,4 + top-k 25 (livro)]
+Every effort moves you of his pictures with random rather a secret was " that with a curious of a laugh: "ident m; and Mrs.
+
+" a Mrs. Gis on him's feet was one turned to be pardoned? itest," she couldn
+

@@ -1,0 +1,46 @@
+========================================================================
+Sprint 5 — treinamento base do GPT-2 124M (contexto 256)
+========================================================================
+  python         : 3.14.5
+  torch          : 2.14.1+cu126
+  dispositivo    : cuda (NVIDIA GeForce GTX 1650)
+  sistema        : Windows-11-10.0.26200-SP0
+  parâmetros     : 162,419,712
+  lotes treino   : 9 | lotes validação: 1
+  configuração   : {"num_epocas": 10, "batch_size": 2, "max_length": 256, "stride": 256, "proporcao_treino": 0.9, "otimizador": "AdamW", "taxa_aprendizado": 0.0004, "weight_decay": 0.1, "frequencia_avaliacao": 5, "lotes_avaliacao": 5, "semente": 123, "dispositivo": "cuda", "corpus": "sprints/the-verdict.txt"}
+
+  antes do treino: perda treino 10.988 (perplexidade 59,135) | validação 10.981 (perplexidade 58,753)
+
+  época   1 | passo     0 | perda treino 9.873 | perda validação 10.101
+  época   1 | passo     5 | perda treino 8.097 | perda validação 8.341
+  amostra (época 1): 'Every effort moves you.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+  época   2 | passo    10 | perda treino 6.704 | perda validação 7.091
+  época   2 | passo    15 | perda treino 6.119 | perda validação 6.668
+  amostra (época 2): 'Every effort moves you.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+  época   3 | passo    20 | perda treino 5.679 | perda validação 6.499
+  época   3 | passo    25 | perda treino 5.558 | perda validação 6.513
+  amostra (época 3): 'Every effort moves you.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+  época   4 | passo    30 | perda treino 5.311 | perda validação 6.496
+  época   4 | passo    35 | perda treino 5.325 | perda validação 6.565
+  amostra (época 4): 'Every effort moves you, and, and, and, and, and, and of the of the of the of the of the to, I had to to the of the of the of the of the of the of the of the of the of the of the of'
+  época   5 | passo    40 | perda treino 4.936 | perda validação 6.412
+  amostra (época 5): 'Every effort moves you.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+  época   6 | passo    45 | perda treino 4.429 | perda validação 6.322
+  época   6 | passo    50 | perda treino 4.010 | perda validação 6.369
+  amostra (época 6): 'Every effort moves you know the end. Gisburn--I he had a little that he had been his pictures--as his pictures--I had been his pictures--as his pictures--as he had been his painting, in the picture--as--that was his'
+  época   7 | passo    55 | perda treino 3.365 | perda validação 6.204
+  época   7 | passo    60 | perda treino 3.076 | perda validação 6.223
+  amostra (época 7): 'Every effort moves you know to the fact that my hostess was not that lifted the fact of the house-confident moustache, I felt to see.\n"Oh, and he had always--and I had the fact, and were, and I had'
+  época   8 | passo    65 | perda treino 2.405 | perda validação 6.231
+  época   8 | passo    70 | perda treino 2.088 | perda validação 6.171
+  amostra (época 8): 'Every effort moves you know," was not that my hostess was "interesting": on that point I could have given Miss Croft the fact, and that, in the moment--as Jack himself, and he was his own sex, and "strong.\n\n\n'
+  época   9 | passo    75 | perda treino 1.563 | perda validação 6.193
+  época   9 | passo    80 | perda treino 1.207 | perda validação 6.235
+  amostra (época 9): 'Every effort moves you?"\n\n"I must."\n"--I turned the his eyes. "Yes--and by me to me to me. It was just because she was _not_ his pictures--the quality of Jack\'s "There were days, in'
+  época  10 | passo    85 | perda treino 1.157 | perda validação 6.347
+  amostra (época 10): 'Every effort moves you know," was one of the axioms he had been the tips of a self-confident moustache, I felt to what a smile behind his close grayish beard--as if he had the, a fashionable painter--that I had'
+
+  depois do treino: perda treino 0.825 (perplexidade 2.3) | validação 6.364 (perplexidade 580.7)
+  tempo de treino: 49.3 s
+  artefatos -> results-by-sprints/sprint05/base-*
+  checkpoint -> results-by-sprints/sprint05/base-modelo.pt

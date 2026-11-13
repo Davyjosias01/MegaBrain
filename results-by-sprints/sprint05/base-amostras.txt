@@ -1,0 +1,12 @@
+Contexto inicial: 'Every effort moves you' (greedy, 50 tokens)
+
+Época  1: 'Every effort moves you.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+Época  2: 'Every effort moves you.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+Época  3: 'Every effort moves you.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+Época  4: 'Every effort moves you, and, and, and, and, and, and of the of the of the of the of the to, I had to to the of the of the of the of the of the of the of the of the of the of the of'
+Época  5: 'Every effort moves you.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+Época  6: 'Every effort moves you know the end. Gisburn--I he had a little that he had been his pictures--as his pictures--I had been his pictures--as his pictures--as he had been his painting, in the picture--as--that was his'
+Época  7: 'Every effort moves you know to the fact that my hostess was not that lifted the fact of the house-confident moustache, I felt to see.\n"Oh, and he had always--and I had the fact, and were, and I had'
+Época  8: 'Every effort moves you know," was not that my hostess was "interesting": on that point I could have given Miss Croft the fact, and that, in the moment--as Jack himself, and he was his own sex, and "strong.\n\n\n'
+Época  9: 'Every effort moves you?"\n\n"I must."\n"--I turned the his eyes. "Yes--and by me to me to me. It was just because she was _not_ his pictures--the quality of Jack\'s "There were days, in'
+Época 10: 'Every effort moves you know," was one of the axioms he had been the tips of a self-confident moustache, I felt to what a smile behind his close grayish beard--as if he had the, a fashionable painter--that I had'

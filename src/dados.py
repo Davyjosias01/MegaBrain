@@ -34,6 +34,8 @@ __all__ = [
     "numero_de_amostras",
     "GPTDatasetV1",
     "criar_dataloader",
+    "dividir_treino_validacao",
+    "criar_loaders_treino_validacao",
 ]
 
 
@@ -154,3 +156,50 @@ def criar_dataloader(
         drop_last=drop_last,
         num_workers=num_workers,
     )
+
+
+# --- Sprint 5: conjuntos de treinamento e validação -------------------------
+def dividir_treino_validacao(texto: str, proporcao_treino: float = 0.9) -> tuple[str, str]:
+    """Divide o corpus em treinamento e validação — seção 5.1.
+
+    O corte é feito por caracteres, no ponto ``proporcao_treino`` do texto: o
+    início vai para o treinamento e o final para a validação. Não há
+    embaralhamento, para que a validação seja um trecho contínuo que o modelo
+    nunca vê durante o treinamento.
+    """
+    if not 0.0 < proporcao_treino < 1.0:
+        raise ValueError("proporcao_treino deve estar entre 0 e 1 (exclusivo).")
+    corte = int(proporcao_treino * len(texto))
+    return texto[:corte], texto[corte:]
+
+
+def criar_loaders_treino_validacao(
+    texto: str,
+    proporcao_treino: float = 0.9,
+    batch_size: int = 2,
+    max_length: int = 256,
+    stride: int | None = None,
+    tokenizador=None,
+) -> tuple[DataLoader, DataLoader]:
+    """DataLoaders de treinamento e de validação, como na seção 5.1.
+
+    - treinamento: ``shuffle=True`` e ``drop_last=True`` — a ordem muda a cada
+      época e lotes incompletos são descartados;
+    - validação: ``shuffle=False`` e ``drop_last=False`` — avaliação
+      determinística, usando todo o trecho de validação.
+
+    ``stride`` igual a ``max_length`` por padrão: janelas sem sobreposição.
+    Para embaralhar de forma reprodutível, fixe a semente antes de iterar.
+    """
+    stride = max_length if stride is None else stride
+    tokenizador = tokenizador or TokenizadorBPE()
+    treino, validacao = dividir_treino_validacao(texto, proporcao_treino)
+    loader_treino = criar_dataloader(
+        treino, batch_size=batch_size, max_length=max_length, stride=stride,
+        shuffle=True, drop_last=True, tokenizador=tokenizador,
+    )
+    loader_validacao = criar_dataloader(
+        validacao, batch_size=batch_size, max_length=max_length, stride=stride,
+        shuffle=False, drop_last=False, tokenizador=tokenizador,
+    )
+    return loader_treino, loader_validacao
