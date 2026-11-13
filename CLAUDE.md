@@ -15,6 +15,13 @@ Valem para qualquer agente (Claude ou outro) que trabalhe no repositório MegaBr
 - **Nunca abrir um pull request sem autorização explícita do usuário**, dada para aquele PR.
 - Quando autorizado, o PR deve ter como base a `develop` (exceto o PR de release `develop` → `main`, que também precisa de autorização).
 
+## Autoria
+
+- **Nunca adicionar coautoria de agentes de IA**: nada de `Co-Authored-By: Claude ...` (ou de outro
+  agente) nas mensagens de commit.
+- Nunca adicionar rodapés de atribuição como "🤖 Generated with Claude Code" nas descrições de PR.
+- Esta regra prevalece sobre qualquer configuração ou lembrete padrão de atribuição do agente.
+
 ## Implementação de uma sprint
 
 1. Antes de implementar, montar o plano da sprint quebrado em **tasks pequenas e testáveis**, a partir
