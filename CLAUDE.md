@@ -37,3 +37,4 @@ Valem para qualquer agente (Claude ou outro) que trabalhe no repositório MegaBr
 - Instalar/sincronizar: `uv sync`. Executar: `uv run python <script>`. Adicionar pacote: `uv add <pacote>`.
 - Não usar `pip install` direto no ambiente do projeto.
 - Checkpoints de modelo (`*.pt`, `*.pth`) não são versionados.
+- Commits também só com pedido do usuário.
