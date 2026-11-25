@@ -64,7 +64,10 @@ import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 
+import torch
 from tqdm import tqdm
+
+from gpt import GPTModel
 
 __all__ = [
     "PASTA_MODELOS",
@@ -74,6 +77,9 @@ __all__ = [
     "Correspondencia",
     "mapa_de_parametros",
     "eh_tensor_ignorado",
+    "ler_pesos",
+    "extrair_tensor",
+    "carregar_pesos_gpt2",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -211,3 +217,83 @@ def eh_tensor_ignorado(nome: str) -> bool:
     ``lm_head.weight``, quando presente, é uma cópia de ``wte.weight``.
     """
     return nome.endswith((".attn.bias", ".attn.masked_bias")) or nome == "lm_head.weight"
+
+
+# ---------------------------------------------------------------------------
+# 3. Leitura do arquivo e cópia dos pesos para o modelo
+# ---------------------------------------------------------------------------
+def ler_pesos(caminho: Path | str) -> dict[str, torch.Tensor]:
+    """Lê um arquivo ``.safetensors`` como um dicionário ``nome -> tensor``.
+
+    Algumas versões do arquivo trazem os nomes com o prefixo ``transformer.``;
+    ele é removido para que os nomes fiquem iguais aos da tabela do módulo.
+    """
+    from safetensors.torch import load_file
+
+    pesos = load_file(str(caminho))
+    return {nome.removeprefix("transformer."): tensor for nome, tensor in pesos.items()}
+
+
+def extrair_tensor(pesos: dict[str, torch.Tensor], c: Correspondencia) -> torch.Tensor:
+    """Aplica a uma linha da tabela as operações de fatia e de transposição.
+
+    A fatia é feita na **última** dimensão do tensor do arquivo: para o peso
+    de ``c_attn``, de forma ``(d, 3d)``, são as colunas; para o bias, de forma
+    ``(3d,)``, são os elementos. A transposição vem depois, levando o peso de
+    ``(d, d)`` no formato ``Conv1D`` para o formato do ``nn.Linear``.
+    """
+    if c.origem not in pesos:
+        raise ValueError(f"o arquivo de pesos não contém o tensor {c.origem!r}.")
+    tensor = pesos[c.origem]
+    if c.fatia is not None:
+        if tensor.shape[-1] % 3 != 0:
+            raise ValueError(
+                f"{c.origem!r} tem {tensor.shape[-1]} colunas, que não se dividem em Q, K e V."
+            )
+        d = tensor.shape[-1] // 3
+        tensor = tensor[..., c.fatia * d : (c.fatia + 1) * d]
+    if c.transpor:
+        tensor = tensor.T
+    return tensor
+
+
+def carregar_pesos_gpt2(modelo: GPTModel, pesos: dict[str, torch.Tensor]) -> GPTModel:
+    """Copia os pesos do GPT-2 para um ``GPTModel``, conferindo cada forma.
+
+    Nada é copiado antes de todas as conferências passarem, de modo que um
+    erro não deixa o modelo com parte dos pesos trocada. São erros:
+
+    - um tensor do arquivo que a tabela não usa (por exemplo, os bias de
+      ``c_attn`` quando o modelo foi criado com ``qkv_bias=False``);
+    - um tensor cuja forma difere da do parâmetro de destino (por exemplo,
+      ``context_length`` diferente de 1024 ou ``emb_dim`` de outro tamanho).
+
+    Returns:
+        O próprio ``modelo``, com os pesos carregados.
+    """
+    mapa = mapa_de_parametros(modelo.cfg)
+
+    usados = {c.origem for c in mapa}
+    sobrando = sorted(n for n in pesos if n not in usados and not eh_tensor_ignorado(n))
+    if sobrando:
+        raise ValueError(
+            f"{len(sobrando)} tensores do arquivo ficaram sem destino no modelo "
+            f"(por exemplo {sobrando[0]!r}). Confira n_layers e qkv_bias=True na configuração."
+        )
+
+    destino = modelo.state_dict()
+    tensores = {}
+    for c in mapa:
+        tensor = extrair_tensor(pesos, c)
+        if tensor.shape != destino[c.destino].shape:
+            raise ValueError(
+                f"forma incompatível em {c.destino!r}: o modelo espera "
+                f"{tuple(destino[c.destino].shape)} e {c.origem!r} fornece {tuple(tensor.shape)}."
+            )
+        tensores[c.destino] = tensor
+
+    # Os tensores de state_dict() compartilham memória com os parâmetros.
+    with torch.no_grad():
+        for nome, tensor in tensores.items():
+            destino[nome].copy_(tensor)
+    return modelo
