@@ -16,12 +16,52 @@ checkpoints originais em TensorFlow que o livro usa, em um formato que é
 apenas um dicionário ``nome -> tensor`` e não exige instalar o TensorFlow.
 Nenhuma classe de modelo pronta é usada: o arquivo só fornece números.
 
+Correspondência entre o arquivo e o ``GPTModel`` (``i`` é o índice do bloco)::
+
+    arquivo (GPT-2)            GPTModel                              operação
+    -------------------------  ------------------------------------  ----------
+    wte.weight                 embedding.token_emb.weight            cópia
+    wpe.weight                 embedding.pos_emb.weight              cópia
+    h.i.ln_1.weight / bias     trf_blocks.i.norm1.scale / shift      cópia
+    h.i.attn.c_attn.weight     trf_blocks.i.att.W_query.weight       fatia 0, transposta
+                               trf_blocks.i.att.W_key.weight         fatia 1, transposta
+                               trf_blocks.i.att.W_value.weight       fatia 2, transposta
+    h.i.attn.c_attn.bias       trf_blocks.i.att.W_{query,key,value}.bias   fatias 0, 1, 2
+    h.i.attn.c_proj.weight     trf_blocks.i.att.out_proj.weight      transposta
+    h.i.attn.c_proj.bias       trf_blocks.i.att.out_proj.bias        cópia
+    h.i.ln_2.weight / bias     trf_blocks.i.norm2.scale / shift      cópia
+    h.i.mlp.c_fc.weight        trf_blocks.i.ff.layers.0.weight       transposta
+    h.i.mlp.c_fc.bias          trf_blocks.i.ff.layers.0.bias         cópia
+    h.i.mlp.c_proj.weight      trf_blocks.i.ff.layers.2.weight       transposta
+    h.i.mlp.c_proj.bias        trf_blocks.i.ff.layers.2.bias         cópia
+    ln_f.weight / bias         final_norm.scale / shift              cópia
+    wte.weight                 out_head.weight                       cópia
+
+Três diferenças de formato explicam as operações:
+
+- **Transposição.** O GPT-2 original implementa as camadas lineares com uma
+  classe ``Conv1D`` que guarda o peso como ``(entrada, saída)``. O
+  ``nn.Linear`` do PyTorch guarda ``(saída, entrada)``. É a mesma matriz,
+  transposta.
+- **Fatias de ``c_attn``.** No arquivo, as projeções de *query*, *key* e
+  *value* são uma única camada com saída ``3·d``. Na nossa
+  ``MultiHeadAttention`` são três ``nn.Linear`` separadas. As colunas
+  ``[0, d)``, ``[d, 2d)`` e ``[2d, 3d)`` correspondem a Q, K e V, nessa ordem.
+- **Cabeça de saída.** O GPT-2 não tem uma matriz própria para ``out_head``:
+  reutiliza a tabela de embeddings de token (*weight tying*). Por isso
+  ``wte.weight`` aparece duas vezes na tabela.
+
+O GPT-2 usa bias nas projeções Q, K e V e contexto de 1024 tokens, então o
+modelo que recebe os pesos precisa de ``qkv_bias=True`` e
+``context_length=1024`` — diferente da configuração treinada na Sprint 5.
+
 Os arquivos ``*.safetensors`` não são versionados no Git (ver ``.gitignore``).
 """
 
 from __future__ import annotations
 
 import urllib.request
+from dataclasses import dataclass
 from pathlib import Path
 
 from tqdm import tqdm
@@ -31,6 +71,9 @@ __all__ = [
     "REPOSITORIOS_GPT2",
     "caminho_dos_pesos",
     "baixar_pesos_gpt2",
+    "Correspondencia",
+    "mapa_de_parametros",
+    "eh_tensor_ignorado",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -93,3 +136,78 @@ def baixar_pesos_gpt2(
     parcial.replace(destino)
     return destino
 
+
+# ---------------------------------------------------------------------------
+# 2. Correspondência entre o arquivo do GPT-2 e o GPTModel
+# ---------------------------------------------------------------------------
+@dataclass(frozen=True)
+class Correspondencia:
+    """Uma linha da tabela arquivo -> modelo.
+
+    Attributes:
+        destino: nome do parâmetro no ``state_dict`` do ``GPTModel``.
+        origem: nome do tensor no arquivo do GPT-2.
+        transpor: ``True`` para pesos de ``Conv1D``, guardados como
+            ``(entrada, saída)``.
+        fatia: ``None`` para usar o tensor inteiro; 0, 1 ou 2 para ficar com o
+            terço de *query*, *key* ou *value* de ``c_attn``.
+    """
+
+    destino: str
+    origem: str
+    transpor: bool = False
+    fatia: int | None = None
+
+
+def mapa_de_parametros(cfg: dict) -> list[Correspondencia]:
+    """Tabela completa arquivo -> modelo para a configuração ``cfg``.
+
+    Cada parâmetro do ``GPTModel`` aparece exatamente uma vez como destino.
+    Os bias de Q, K e V só entram se ``cfg["qkv_bias"]`` for verdadeiro.
+    """
+    C = Correspondencia
+    mapa = [
+        C("embedding.token_emb.weight", "wte.weight"),
+        C("embedding.pos_emb.weight", "wpe.weight"),
+    ]
+    for i in range(cfg["n_layers"]):
+        bloco, h = f"trf_blocks.{i}", f"h.{i}"
+        mapa += [
+            C(f"{bloco}.norm1.scale", f"{h}.ln_1.weight"),
+            C(f"{bloco}.norm1.shift", f"{h}.ln_1.bias"),
+        ]
+        for fatia, nome in enumerate(("W_query", "W_key", "W_value")):
+            mapa.append(
+                C(f"{bloco}.att.{nome}.weight", f"{h}.attn.c_attn.weight", True, fatia)
+            )
+            if cfg.get("qkv_bias", False):
+                mapa.append(
+                    C(f"{bloco}.att.{nome}.bias", f"{h}.attn.c_attn.bias", False, fatia)
+                )
+        mapa += [
+            C(f"{bloco}.att.out_proj.weight", f"{h}.attn.c_proj.weight", True),
+            C(f"{bloco}.att.out_proj.bias", f"{h}.attn.c_proj.bias"),
+            C(f"{bloco}.norm2.scale", f"{h}.ln_2.weight"),
+            C(f"{bloco}.norm2.shift", f"{h}.ln_2.bias"),
+            C(f"{bloco}.ff.layers.0.weight", f"{h}.mlp.c_fc.weight", True),
+            C(f"{bloco}.ff.layers.0.bias", f"{h}.mlp.c_fc.bias"),
+            C(f"{bloco}.ff.layers.2.weight", f"{h}.mlp.c_proj.weight", True),
+            C(f"{bloco}.ff.layers.2.bias", f"{h}.mlp.c_proj.bias"),
+        ]
+    mapa += [
+        C("final_norm.scale", "ln_f.weight"),
+        C("final_norm.shift", "ln_f.bias"),
+        C("out_head.weight", "wte.weight"),
+    ]
+    return mapa
+
+
+def eh_tensor_ignorado(nome: str) -> bool:
+    """Tensores do arquivo que não são pesos treinados.
+
+    ``h.i.attn.bias`` e ``h.i.attn.masked_bias`` são, apesar do nome, a máscara
+    causal e a constante usada para mascarar — equivalentes ao buffer ``mask``
+    da nossa ``MultiHeadAttention``, que é recriado na construção do modelo.
+    ``lm_head.weight``, quando presente, é uma cópia de ``wte.weight``.
+    """
+    return nome.endswith((".attn.bias", ".attn.masked_bias")) or nome == "lm_head.weight"
