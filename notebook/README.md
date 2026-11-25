@@ -23,6 +23,7 @@ duplicar a implementação. Isso mantém uma única fonte de verdade para o cód
 | [`sprint03-mecanismos-de-atencao.ipynb`](sprint03-mecanismos-de-atencao.ipynb) | 3 | Os quatro mecanismos de atenção do Capítulo 3, passo a passo, com os exercícios 3.1, 3.2 e 3.3 |
 | [`sprint04-arquitetura-gpt.ipynb`](sprint04-arquitetura-gpt.ipynb) | 4 | Do LayerNorm ao modelo GPT completo, com as formas de cada tensor, a inferência passo a passo e temperatura e top-k |
 | [`sprint05-treinamento.ipynb`](sprint05-treinamento.ipynb) | 5 | Entropia cruzada à mão, perda e perplexidade, laço de treinamento, sobreajuste, estratégias de geração com e sem treino e checkpoints |
+| [`sprint06-fine-tuning.ipynb`](sprint06-fine-tuning.ipynb) | 6 | Do arquivo de pesos do GPT-2 ao `GPTModel`, cabeça de classificação e camadas congeladas, métricas do classificador, formato do prompt e montagem dos lotes de instrução, geração e avaliação das respostas |
 
 
 ## Execução
