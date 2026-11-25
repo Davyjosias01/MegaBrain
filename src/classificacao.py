@@ -26,6 +26,10 @@ import zipfile
 from pathlib import Path
 
 import pandas as pd
+import torch
+from torch.utils.data import DataLoader, Dataset
+
+from tokenizacao import TokenizadorBPE
 
 __all__ = [
     "PASTA_SPAM",
@@ -36,6 +40,9 @@ __all__ = [
     "balancear_classes",
     "dividir_treino_validacao_teste",
     "preparar_base_spam",
+    "ID_PADDING",
+    "DatasetDeClassificacao",
+    "criar_loaders_classificacao",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -47,6 +54,9 @@ ARQUIVO_NO_ZIP = "SMSSpamCollection"
 # Índice da classe -> nome. Na base original, "ham" é a mensagem legítima.
 NOMES_DAS_CLASSES = ["não spam", "spam"]
 _ROTULOS = {"ham": 0, "spam": 1}
+
+# <|endoftext|>, o token usado para completar as mensagens curtas.
+ID_PADDING = 50256
 
 
 # ---------------------------------------------------------------------------
@@ -160,3 +170,83 @@ def preparar_base_spam(
         caminhos[nome] = pasta / f"{nome}.csv"
         parte.to_csv(caminhos[nome], index=False, encoding="utf-8", lineterminator="\n")
     return caminhos
+
+
+# ---------------------------------------------------------------------------
+# 2. Lotes: tokenização, truncamento e padding
+# ---------------------------------------------------------------------------
+class DatasetDeClassificacao(Dataset):
+    """Mensagens tokenizadas, todas com o mesmo comprimento, e seus rótulos.
+
+    Um lote é um tensor retangular, mas as mensagens têm tamanhos diferentes.
+    A solução do capítulo é levar todas a um comprimento único:
+
+    - mensagens **maiores** que ``max_length`` são truncadas;
+    - mensagens **menores** são completadas à direita com ``id_padding``
+      (``<|endoftext|>``, 50256).
+
+    Se ``max_length`` não for informado, vale o comprimento da maior mensagem
+    deste conjunto. Os conjuntos de validação e de teste devem receber o
+    ``max_length`` do **treino**: o modelo é ajustado para sequências desse
+    tamanho, e o comprimento não pode depender de dados que ele não viu.
+
+    Cada item é ``(ids, rotulo)``: ``ids`` com forma ``(max_length,)`` e
+    ``rotulo`` um inteiro (tensor escalar ``long``).
+    """
+
+    def __init__(
+        self,
+        dados: pd.DataFrame | Path | str,
+        tokenizador=None,
+        max_length: int | None = None,
+        id_padding: int = ID_PADDING,
+    ) -> None:
+        if not isinstance(dados, pd.DataFrame):
+            dados = pd.read_csv(dados, encoding="utf-8")
+        tokenizador = tokenizador or TokenizadorBPE()
+        self.rotulos = dados["rotulo"].astype(int).tolist()
+        codificados = [tokenizador.encode(texto) for texto in dados["texto"]]
+        self.max_length = max_length or max(len(ids) for ids in codificados)
+        self.id_padding = id_padding
+        self.textos = [
+            ids[: self.max_length] + [id_padding] * (self.max_length - len(ids))
+            for ids in codificados
+        ]
+
+    def __len__(self) -> int:
+        return len(self.rotulos)
+
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+        return (
+            torch.tensor(self.textos[idx], dtype=torch.long),
+            torch.tensor(self.rotulos[idx], dtype=torch.long),
+        )
+
+
+def criar_loaders_classificacao(
+    pasta: Path | str = PASTA_SPAM,
+    tokenizador=None,
+    batch_size: int = 8,
+    max_length: int | None = None,
+    semente: int = 123,
+) -> tuple[DataLoader, DataLoader, DataLoader]:
+    """Loaders de treino, validação e teste a partir dos CSV de ``preparar_base_spam``.
+
+    O comprimento das sequências é o do conjunto de **treino** (ou
+    ``max_length``, se informado — por exemplo o ``context_length`` do modelo,
+    quando há mensagens maiores que ele) e é aplicado aos três conjuntos.
+
+    Só o loader de treino embaralha e descarta o último lote incompleto; os
+    de validação e teste percorrem todos os exemplos, sempre na mesma ordem.
+    """
+    pasta = Path(pasta)
+    tokenizador = tokenizador or TokenizadorBPE()
+    treino = DatasetDeClassificacao(pasta / "treino.csv", tokenizador, max_length)
+    validacao = DatasetDeClassificacao(pasta / "validacao.csv", tokenizador, treino.max_length)
+    teste = DatasetDeClassificacao(pasta / "teste.csv", tokenizador, treino.max_length)
+    gerador = torch.Generator().manual_seed(semente)
+    return (
+        DataLoader(treino, batch_size=batch_size, shuffle=True, drop_last=True, generator=gerador),
+        DataLoader(validacao, batch_size=batch_size, shuffle=False, drop_last=False),
+        DataLoader(teste, batch_size=batch_size, shuffle=False, drop_last=False),
+    )
