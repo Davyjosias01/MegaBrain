@@ -12,7 +12,8 @@ Etapas, na ordem das seções deste arquivo:
 3. **modelo** — trocar a cabeça de saída e escolher o que fica treinável;
 4. **avaliação** — perda e acurácia a partir do logit do último token;
 5. **treinamento** — o laço de fine-tuning;
-6. **uso** — classificar um texto novo.
+6. **uso** — classificar um texto novo;
+7. **checkpoint** — recarregar um classificador salvo.
 
 A base é a *SMS Spam Collection* (Almeida e Hidalgo, UCI Machine Learning
 Repository, licença CC BY 4.0): 5.574 mensagens em inglês, 747 delas *spam*.
@@ -53,6 +54,7 @@ __all__ = [
     "acuracia_do_loader",
     "treinar_classificador",
     "classificar_texto",
+    "carregar_classificador",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -442,6 +444,7 @@ def treinar_classificador(
     lotes_avaliacao: int | None = 5,
     posicao: int = -1,
     verboso: bool = True,
+    lotes_acuracia: int | None = -1,
 ) -> dict[str, list]:
     """Laço de fine-tuning supervisionado — ``train_classifier_simple`` da seção 6.7.
 
@@ -456,8 +459,9 @@ def treinar_classificador(
 
     A cada ``frequencia_avaliacao`` passos registra as perdas de treino e de
     validação em ``lotes_avaliacao`` lotes; ao fim de cada época, as acurácias
-    de treino e de validação nos mesmos ``lotes_avaliacao`` lotes (``None``
-    usa o conjunto inteiro).
+    de treino e de validação em ``lotes_acuracia`` lotes (por padrão, a mesma
+    quantidade de ``lotes_avaliacao``). Em ambos, ``None`` usa o conjunto
+    inteiro.
 
     Returns:
         Histórico com as listas ``passos``, ``exemplos_vistos``,
@@ -469,6 +473,8 @@ def treinar_classificador(
         "acuracia_treino": [], "acuracia_validacao": [],
     }
     exemplos_vistos, passo = 0, -1
+    if lotes_acuracia == -1:
+        lotes_acuracia = lotes_avaliacao
 
     for epoca in range(num_epocas):
         modelo.train()
@@ -495,9 +501,9 @@ def treinar_classificador(
                           f"perda de validação {perda_validacao:.3f}")
 
         acuracia_treino = acuracia_do_loader(
-            loader_treino, modelo, dispositivo, lotes_avaliacao, posicao)
+            loader_treino, modelo, dispositivo, lotes_acuracia, posicao)
         acuracia_validacao = acuracia_do_loader(
-            loader_validacao, modelo, dispositivo, lotes_avaliacao, posicao)
+            loader_validacao, modelo, dispositivo, lotes_acuracia, posicao)
         historico["acuracia_treino"].append(acuracia_treino)
         historico["acuracia_validacao"].append(acuracia_validacao)
         if verboso:
@@ -561,3 +567,31 @@ def classificar_texto(
         )
     classe = nomes[int(probabilidades.argmax())]
     return classe, {nome: float(p) for nome, p in zip(nomes, probabilidades)}
+
+
+# ---------------------------------------------------------------------------
+# 7. Checkpoint do classificador
+# ---------------------------------------------------------------------------
+def carregar_classificador(
+    caminho: Path | str, dispositivo: torch.device | str = "cpu"
+) -> tuple[GPTModel, dict]:
+    """Reconstrói um classificador gravado com ``checkpoint.salvar_checkpoint``.
+
+    ``carregar_checkpoint`` da Sprint 5 não serve aqui: ele recria o
+    ``GPTModel`` com a cabeça de 50.257 saídas, e os pesos gravados têm a
+    cabeça de ``num_classes`` saídas. Esta função recria o modelo, troca a
+    cabeça (``cfg_modelo["num_classes"]``) e só então carrega os pesos.
+
+    Returns:
+        ``(modelo, dados)``, com o modelo em ``eval()`` e todos os parâmetros
+        congelados — o checkpoint serve para inferência.
+    """
+    dados = torch.load(caminho, map_location=dispositivo, weights_only=True)
+    cfg = dict(dados["cfg_modelo"])
+    if "num_classes" not in cfg:
+        raise ValueError("o checkpoint não é de um classificador (falta num_classes).")
+    modelo = adaptar_para_classificacao(GPTModel(cfg), cfg["num_classes"], blocos_treinaveis=0)
+    modelo.load_state_dict(dados["modelo"])
+    for parametro in modelo.parameters():
+        parametro.requires_grad = False
+    return modelo.to(dispositivo).eval(), dados
