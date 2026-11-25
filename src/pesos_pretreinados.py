@@ -67,7 +67,7 @@ from pathlib import Path
 import torch
 from tqdm import tqdm
 
-from gpt import GPTModel
+from gpt import GPTModel, config_gpt2
 
 __all__ = [
     "PASTA_MODELOS",
@@ -80,6 +80,8 @@ __all__ = [
     "ler_pesos",
     "extrair_tensor",
     "carregar_pesos_gpt2",
+    "config_gpt2_pretreinado",
+    "carregar_gpt2_pretreinado",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -297,3 +299,37 @@ def carregar_pesos_gpt2(modelo: GPTModel, pesos: dict[str, torch.Tensor]) -> GPT
         for nome, tensor in tensores.items():
             destino[nome].copy_(tensor)
     return modelo
+
+
+# ---------------------------------------------------------------------------
+# 4. Modelo pronto para inferência
+# ---------------------------------------------------------------------------
+def config_gpt2_pretreinado(tamanho: str = "small", **alteracoes) -> dict:
+    """Configuração do ``GPTModel`` compatível com os pesos publicados do GPT-2.
+
+    Em relação à configuração treinada na Sprint 5, mudam ``context_length``
+    (1024, o tamanho da tabela posicional do arquivo) e ``qkv_bias`` (``True``:
+    o GPT-2 foi treinado com bias em Q, K e V). O dropout fica em zero, que é
+    o comportamento da inferência; para o fine-tuning ele pode ser religado
+    com ``drop_rate=...``, porque não altera a forma de nenhum parâmetro.
+    """
+    cfg = config_gpt2(tamanho, context_length=1024, qkv_bias=True, drop_rate=0.0)
+    cfg.update(alteracoes)
+    return cfg
+
+
+def carregar_gpt2_pretreinado(
+    tamanho: str = "small",
+    pasta: Path | str = PASTA_MODELOS,
+    dispositivo: torch.device | str = "cpu",
+    **alteracoes,
+) -> GPTModel:
+    """Baixa (se preciso), monta o ``GPTModel`` e carrega os pesos do GPT-2.
+
+    Devolve o modelo em modo ``eval()``, pronto para inferência e geração com
+    as funções de ``geracao.py``.
+    """
+    caminho = baixar_pesos_gpt2(tamanho, pasta)
+    modelo = GPTModel(config_gpt2_pretreinado(tamanho, **alteracoes))
+    carregar_pesos_gpt2(modelo, ler_pesos(caminho))
+    return modelo.to(dispositivo).eval()
