@@ -14,7 +14,8 @@ Etapas, na ordem das seções deste arquivo:
 
 1. **dados** — carregar a base, formatar cada exemplo como um prompt e
    dividir em treino, validação e teste;
-2. **lotes** — tokenizar e agrupar exemplos de tamanhos diferentes.
+2. **lotes** — tokenizar e agrupar exemplos de tamanhos diferentes, com o
+   padding fora do cálculo da perda.
 
 A base é a do capítulo: ``instruction-data.json``, com 1.100 exemplos em
 inglês, do repositório do livro (github.com/rasbt/LLMs-from-scratch, licença
@@ -27,6 +28,11 @@ import json
 import urllib.request
 from pathlib import Path
 
+import torch
+from torch.utils.data import Dataset
+
+from tokenizacao import TokenizadorBPE
+
 __all__ = [
     "PASTA_INSTRUCOES",
     "MARCADOR_RESPOSTA",
@@ -36,6 +42,10 @@ __all__ = [
     "formatar_entrada",
     "formatar_exemplo",
     "dividir_instrucoes",
+    "ID_PADDING",
+    "INDICE_IGNORADO",
+    "DatasetDeInstrucoes",
+    "agrupar_lote",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -55,6 +65,11 @@ _ABERTURA = (
 _MARCADOR_INSTRUCAO = "\n\n### Instruction:\n"
 _MARCADOR_ENTRADA = "\n\n### Input:\n"
 MARCADOR_RESPOSTA = "\n\n### Response:\n"
+
+# <|endoftext|>: marca o fim da resposta e completa as sequências curtas.
+ID_PADDING = 50256
+# Valor que a entropia cruzada do PyTorch ignora por padrão (ignore_index).
+INDICE_IGNORADO = -100
 
 
 # ---------------------------------------------------------------------------
@@ -153,3 +168,82 @@ def dividir_instrucoes(
     fim_treino = int(len(dados) * proporcao_treino)
     fim_teste = fim_treino + int(len(dados) * proporcao_teste)
     return dados[:fim_treino], dados[fim_teste:], dados[fim_treino:fim_teste]
+
+
+# ---------------------------------------------------------------------------
+# 2. Lotes: tokenização e agrupamento
+# ---------------------------------------------------------------------------
+class DatasetDeInstrucoes(Dataset):
+    """Exemplos de instrução já formatados e tokenizados.
+
+    Cada item é a lista de token IDs do prompt completo de treino
+    (``formatar_exemplo``): instrução, entrada e resposta em uma única
+    sequência. Os itens têm comprimentos diferentes; quem os iguala é
+    ``agrupar_lote``, lote a lote.
+    """
+
+    def __init__(self, dados: list[dict], tokenizador=None) -> None:
+        tokenizador = tokenizador or TokenizadorBPE()
+        self.dados = dados
+        self.textos = [tokenizador.encode(formatar_exemplo(exemplo)) for exemplo in dados]
+
+    def __len__(self) -> int:
+        return len(self.textos)
+
+    def __getitem__(self, idx: int) -> list[int]:
+        return self.textos[idx]
+
+
+def agrupar_lote(
+    lote: list[list[int]],
+    id_padding: int = ID_PADDING,
+    indice_ignorado: int = INDICE_IGNORADO,
+    max_length: int | None = None,
+    dispositivo: torch.device | str = "cpu",
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Função de *collate*: transforma uma lista de sequências em ``(entradas, alvos)``.
+
+    É chamada pelo ``DataLoader`` para cada lote e faz quatro coisas:
+
+    1. **Padding por lote.** Todas as sequências são completadas com
+       ``id_padding`` até o comprimento da maior **deste lote** — não da base
+       inteira, como na classificação. Lotes de exemplos curtos ficam curtos,
+       e o modelo não gasta tempo processando padding.
+    2. **Alvo deslocado.** Como no pré-treino, o alvo é a entrada deslocada
+       uma posição para a esquerda: em cada posição, o token seguinte. Para
+       isso cada sequência recebe um ``<|endoftext|>`` ao final — é ele o
+       alvo do último token da resposta, e é assim que o modelo aprende a
+       **parar** depois de responder.
+    3. **Padding ignorado na perda.** Nos alvos, todo padding depois desse
+       primeiro ``<|endoftext|>`` é trocado por ``indice_ignorado`` (-100),
+       valor que ``cross_entropy`` desconsidera. Sem isso, boa parte da perda
+       viria de prever padding depois de padding, o que não ensina nada.
+    4. **Truncamento.** Com ``max_length``, entradas e alvos são cortados
+       nesse comprimento, para não exceder o ``context_length`` do modelo.
+
+    Exemplo, com ``id_padding = 50256``::
+
+        lote     = [[0, 1, 2, 3, 4], [5, 6], [7, 8, 9]]
+        entradas = [[0, 1, 2, 3, 4], [5, 6, 50256, 50256, 50256], [7, 8, 9, 50256, 50256]]
+        alvos    = [[1, 2, 3, 4, 50256], [6, 50256, -100, -100, -100], [8, 9, 50256, -100, -100]]
+
+    Returns:
+        ``(entradas, alvos)``, ambos ``long`` com forma ``(lote, comprimento)``.
+    """
+    maior = max(len(item) + 1 for item in lote)  # +1: o <|endoftext|> final
+    entradas, alvos = [], []
+    for item in lote:
+        completo = item + [id_padding] * (maior - len(item))
+        entrada = torch.tensor(completo[:-1], dtype=torch.long)
+        alvo = torch.tensor(completo[1:], dtype=torch.long)
+
+        # Mantém o primeiro padding do alvo (o fim da resposta) e ignora os demais.
+        posicoes_de_padding = torch.nonzero(alvo == id_padding).flatten()
+        if posicoes_de_padding.numel() > 1:
+            alvo[posicoes_de_padding[1:]] = indice_ignorado
+
+        if max_length is not None:
+            entrada, alvo = entrada[:max_length], alvo[:max_length]
+        entradas.append(entrada)
+        alvos.append(alvo)
+    return torch.stack(entradas).to(dispositivo), torch.stack(alvos).to(dispositivo)
