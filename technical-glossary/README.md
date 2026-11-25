@@ -32,6 +32,12 @@ em ordem alfabética dentro de cada arquivo.
 | [`capitulo-03.md`](capitulo-03.md) | 3 | Mecanismos de atenção: self-attention, scaled dot-product, causal attention e multi-head attention |
 | [`capitulo-04.md`](capitulo-04.md) | 4 | Arquitetura GPT: Transformer Block, LayerNorm, conexões residuais, FeedForward, GELU, logits, geração autorregressiva, temperatura e top-k |
 | [`capitulo-05.md`](capitulo-05.md) | 5 | Treinamento e avaliação: entropia cruzada, perplexidade, laço de treinamento, AdamW, taxa de aprendizado, weight decay, sobreajuste, estratégias de decodificação e checkpoints |
+| [`capitulo-06.md`](capitulo-06.md) | 6 | Fine-tuning de classificação: pesos pré-treinados, aprendizado por transferência, cabeça de classificação, camadas congeladas, parâmetros treináveis, lote de treinamento, acurácia, matriz de confusão e conjunto de avaliação |
+| [`capitulo-07.md`](capitulo-07.md) | 7 | Fine-tuning de instruções: base de instruções, formato do prompt, função de agrupamento, índice ignorado, token de fim de texto e avaliação das respostas |
+
+O [`glossario-consolidado.md`](glossario-consolidado.md) reúne os 160 termos dos sete capítulos em ordem
+alfabética, com o capítulo, a primeira frase da definição e o link para a entrada completa. Ele é gerado
+por [`consolidar.py`](consolidar.py) (`uv run python technical-glossary/consolidar.py`).
 
 > [`documentation/Glossario.docx`](../documentation/Glossario.docx) guarda as anotações feitas durante
 > a leitura do Capítulo 1. O glossário oficial do capítulo é [`capitulo-01.md`](capitulo-01.md).
