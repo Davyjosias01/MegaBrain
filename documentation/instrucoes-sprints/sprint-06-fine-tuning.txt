@@ -1,0 +1,32 @@
+Sprint 6 – Pesos pré-treinados e fine-tuning (Capítulos 6 e 7)
+Entrega até 03/12/2026
+
+Chegamos a etapa final do nosso trabalho! Espero muito que tenham aproveitado cada sprint para trilhar um caminho com as próprias pernas neste universo que está muito em alta.
+
+Nesta Sprint, o foco será ampliar a utilização do modelo GPT desenvolvido nas etapas anteriores, explorando o carregamento de pesos pré-treinados e técnicas de fine-tuning para adaptação a tarefas específicas.
+
+O objetivo é compreender a diferença entre construir e treinar um modelo do zero e adaptar um modelo cujos parâmetros já foram previamente treinados. Também será realizada a integração final dos componentes desenvolvidos ao longo do semestre consolidando o repositório.
+
+Entregável 1 – Glossário
+Atualizar o glossário cumulativo com os conceitos relacionados ao fine-tuning e à adaptação de modelos de linguagem. Devem ser contemplados, no mínimo, os termos Fine-Tuning, Pretrained Weights, Transfer Learning, Classification Fine-Tuning, Instruction Fine-Tuning, Classification Head, Frozen Layers, Trainable Parameters, Supervised Fine-Tuning, Instruction Dataset, Training Batch, Classification Accuracy, Evaluation Dataset e Response Evaluation.
+
+Entregável 2 – Carregamento de pesos pré-treinados
+Implementar o carregamento de pesos de um modelo GPT pré-treinado, utilizando a arquitetura desenvolvida nas Sprints anteriores. O estudante deverá compreender como os parâmetros previamente treinados são associados aos componentes correspondentes da arquitetura implementada.
+A atividade deverá demonstrar que o modelo consegue utilizar os pesos carregados para realizar inferência e geração de texto. Também deverá ser documentada a diferença entre utilizar um modelo com pesos inicializados aleatoriamente e utilizar um modelo com pesos pré-treinados.
+
+Entregável 3 – Fine-Tuning para classificação
+Implementar a adaptação de um modelo GPT pré-treinado para uma tarefa de classificação de textos. Como referência, poderá ser utilizada a atividade apresentada no Capítulo 6, que utiliza uma base de mensagens classificadas como spam ou não spam.
+Você deve preparar o conjunto de dados, realizar o pré-processamento, organizar os dados em lotes e adaptar a camada de saída do modelo para produzir as classes desejadas. Também deverá compreender o congelamento de parâmetros (freezing) e a seleção das camadas que permanecerão treináveis durante o ajuste.
+Ao final, o modelo deverá ser capaz de receber um texto e produzir uma classificação correspondente à tarefa proposta.
+
+Entregável 4 – Avaliação do modelo de classificação
+Avaliar o desempenho do modelo após o fine-tuning, utilizando dados que não participaram do treinamento. A avaliação deverá contemplar a acurácia de classificação e a análise dos resultados obtidos.
+Compare comportamento do modelo antes e depois da adaptação, discutindo os efeitos do treinamento sobre a capacidade de executar a tarefa específica. Quando pertinente, poderão ser utilizadas outras métricas de classificação, como precisão, revocação e F1-score.
+
+Entregável 5 – Fine-Tuning para seguir instruções
+Implementar o processo de instruction fine-tuning, conforme apresentado no Capítulo 7. Diferentemente da classificação, essa abordagem busca adaptar o modelo para interpretar instruções fornecidas em linguagem natural e produzir respostas compatíveis com as solicitações recebidas.
+Compreenda a estrutura de um conjunto de dados de instruções, incluindo a organização entre instrução, entrada e resposta esperada. Também deverá implementar ou adaptar o processo de preparação dos dados e organização dos lotes de treinamento para essa finalidade.
+A atividade deverá demonstrar como um modelo pré-treinado pode ser ajustado para responder a instruções específicas, aproximando seu comportamento daquele esperado em assistentes conversacionais.
+
+Observação: os "dados" citados no enunciado são um link para uma pasta no ambiente virtual da UNOESC
+(on.unoesc.edu.br/mod/folder/view.php?id=147189), que exige login.
