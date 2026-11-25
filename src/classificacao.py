@@ -51,6 +51,7 @@ __all__ = [
     "perda_classificacao_do_lote",
     "perda_classificacao_do_loader",
     "acuracia_do_loader",
+    "treinar_classificador",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -424,3 +425,83 @@ def acuracia_do_loader(
         exemplos += alvo.numel()
     modelo.train(treinando)
     return corretos / exemplos
+
+
+# ---------------------------------------------------------------------------
+# 5. Treinamento: o laço de fine-tuning
+# ---------------------------------------------------------------------------
+def treinar_classificador(
+    modelo: nn.Module,
+    loader_treino,
+    loader_validacao,
+    otimizador: torch.optim.Optimizer,
+    dispositivo: torch.device | str,
+    num_epocas: int,
+    frequencia_avaliacao: int = 50,
+    lotes_avaliacao: int | None = 5,
+    posicao: int = -1,
+    verboso: bool = True,
+) -> dict[str, list]:
+    """Laço de fine-tuning supervisionado — ``train_classifier_simple`` da seção 6.7.
+
+    A estrutura é a de ``treinar_modelo`` da Sprint 5 — para cada época e cada
+    lote: ``zero_grad`` → perda → ``backward`` → ``step``. As diferenças são
+    a perda (de classificação, sobre o último token), o que se conta (exemplos
+    em vez de tokens) e o que se acompanha (além da perda, a acurácia).
+
+    Só os parâmetros com ``requires_grad=True`` recebem gradiente e são
+    atualizados; o que foi congelado em ``adaptar_para_classificacao`` passa
+    pelo laço inalterado.
+
+    A cada ``frequencia_avaliacao`` passos registra as perdas de treino e de
+    validação em ``lotes_avaliacao`` lotes; ao fim de cada época, as acurácias
+    de treino e de validação nos mesmos ``lotes_avaliacao`` lotes (``None``
+    usa o conjunto inteiro).
+
+    Returns:
+        Histórico com as listas ``passos``, ``exemplos_vistos``,
+        ``perda_treino``, ``perda_validacao`` (uma entrada por avaliação) e
+        ``acuracia_treino``, ``acuracia_validacao`` (uma entrada por época).
+    """
+    historico: dict[str, list] = {
+        "passos": [], "exemplos_vistos": [], "perda_treino": [], "perda_validacao": [],
+        "acuracia_treino": [], "acuracia_validacao": [],
+    }
+    exemplos_vistos, passo = 0, -1
+
+    for epoca in range(num_epocas):
+        modelo.train()
+        for entrada, alvo in loader_treino:
+            otimizador.zero_grad()
+            perda = perda_classificacao_do_lote(entrada, alvo, modelo, dispositivo, posicao)
+            perda.backward()
+            otimizador.step()
+            exemplos_vistos += entrada.shape[0]
+            passo += 1
+
+            if passo % frequencia_avaliacao == 0:
+                perda_treino = perda_classificacao_do_loader(
+                    loader_treino, modelo, dispositivo, lotes_avaliacao, posicao)
+                perda_validacao = perda_classificacao_do_loader(
+                    loader_validacao, modelo, dispositivo, lotes_avaliacao, posicao)
+                historico["passos"].append(passo)
+                historico["exemplos_vistos"].append(exemplos_vistos)
+                historico["perda_treino"].append(perda_treino)
+                historico["perda_validacao"].append(perda_validacao)
+                if verboso:
+                    print(f"Época {epoca + 1} (passo {passo:05d}): "
+                          f"perda de treino {perda_treino:.3f}, "
+                          f"perda de validação {perda_validacao:.3f}")
+
+        acuracia_treino = acuracia_do_loader(
+            loader_treino, modelo, dispositivo, lotes_avaliacao, posicao)
+        acuracia_validacao = acuracia_do_loader(
+            loader_validacao, modelo, dispositivo, lotes_avaliacao, posicao)
+        historico["acuracia_treino"].append(acuracia_treino)
+        historico["acuracia_validacao"].append(acuracia_validacao)
+        if verboso:
+            print(f"Época {epoca + 1}: acurácia de treino {acuracia_treino:.2%}, "
+                  f"acurácia de validação {acuracia_validacao:.2%}")
+
+    modelo.eval()
+    return historico
