@@ -18,6 +18,8 @@ __pycache__/
 *.ckpt
 *.safetensors
 *.bin
+# Pesos pré-treinados baixados e checkpoints do fine-tuning (Sprint 6)
+modelos/
 
 # Livro-texto: material protegido por direitos autorais, não deve ser redistribuído
 # em um repositório público. Cada integrante mantém sua cópia local.
