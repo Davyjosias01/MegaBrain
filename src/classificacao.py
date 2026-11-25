@@ -52,6 +52,9 @@ __all__ = [
     "perda_classificacao_do_lote",
     "perda_classificacao_do_loader",
     "acuracia_do_loader",
+    "prever_loader",
+    "metricas_da_matriz",
+    "metricas_de_classificacao",
     "treinar_classificador",
     "classificar_texto",
     "carregar_classificador",
@@ -428,6 +431,79 @@ def acuracia_do_loader(
         exemplos += alvo.numel()
     modelo.train(treinando)
     return corretos / exemplos
+
+
+@torch.no_grad()
+def prever_loader(
+    loader, modelo: nn.Module, dispositivo: torch.device | str, posicao: int = -1
+) -> tuple[list[int], list[int]]:
+    """Classes previstas e rótulos verdadeiros de todos os exemplos do loader, em ordem."""
+    treinando = modelo.training
+    modelo.eval()
+    previstos, alvos = [], []
+    for entrada, alvo in loader:
+        logits = logits_de_classe(modelo, entrada.to(dispositivo), posicao)
+        previstos += logits.argmax(dim=-1).tolist()
+        alvos += alvo.tolist()
+    modelo.train(treinando)
+    return previstos, alvos
+
+
+def metricas_da_matriz(vp: int, fp: int, vn: int, fn: int) -> dict[str, float]:
+    """Acurácia, precisão, revocação e F1 a partir da matriz de confusão.
+
+    Tomando *spam* como a classe positiva:
+
+    - ``vp`` (verdadeiro positivo): spam classificado como spam;
+    - ``fp`` (falso positivo): mensagem legítima classificada como spam;
+    - ``vn`` (verdadeiro negativo): legítima classificada como legítima;
+    - ``fn`` (falso negativo): spam que passou como legítimo.
+
+    As métricas respondem a perguntas diferentes:
+
+    - **acurácia** ``(vp + vn) / total`` — que fração das mensagens foi
+      classificada corretamente;
+    - **precisão** ``vp / (vp + fp)`` — das mensagens marcadas como spam,
+      quantas eram spam. Cai quando o filtro bloqueia mensagens legítimas;
+    - **revocação** ``vp / (vp + fn)`` — dos spams existentes, quantos foram
+      pegos. Cai quando o filtro deixa spam passar;
+    - **F1** ``2·P·R / (P + R)`` — média harmônica das duas: só é alta se
+      ambas forem.
+
+    Quando um denominador é zero (por exemplo, nenhuma mensagem foi marcada
+    como spam), a métrica correspondente é definida como 0.
+    """
+    total = vp + fp + vn + fn
+    precisao = vp / (vp + fp) if vp + fp else 0.0
+    revocacao = vp / (vp + fn) if vp + fn else 0.0
+    f1 = 2 * precisao * revocacao / (precisao + revocacao) if precisao + revocacao else 0.0
+    return {
+        "acuracia": (vp + vn) / total if total else 0.0,
+        "precisao": precisao,
+        "revocacao": revocacao,
+        "f1": f1,
+    }
+
+
+def metricas_de_classificacao(
+    loader,
+    modelo: nn.Module,
+    dispositivo: torch.device | str,
+    classe_positiva: int = 1,
+    posicao: int = -1,
+) -> dict:
+    """Matriz de confusão e métricas do modelo sobre um loader inteiro.
+
+    Returns:
+        ``{"vp", "fp", "vn", "fn", "acuracia", "precisao", "revocacao", "f1"}``.
+    """
+    previstos, alvos = prever_loader(loader, modelo, dispositivo, posicao)
+    pares = list(zip(previstos, alvos))
+    vp = sum(p == classe_positiva and a == classe_positiva for p, a in pares)
+    fp = sum(p == classe_positiva and a != classe_positiva for p, a in pares)
+    vn = sum(p != classe_positiva and a != classe_positiva for p, a in pares)
+    fn = sum(p != classe_positiva and a == classe_positiva for p, a in pares)
+    return {"vp": vp, "fp": fp, "vn": vn, "fn": fn, **metricas_da_matriz(vp, fp, vn, fn)}
 
 
 # ---------------------------------------------------------------------------
