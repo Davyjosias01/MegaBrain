@@ -27,8 +27,10 @@ from pathlib import Path
 
 import pandas as pd
 import torch
+import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 
+from gpt import GPTModel
 from tokenizacao import TokenizadorBPE
 
 __all__ = [
@@ -43,6 +45,8 @@ __all__ = [
     "ID_PADDING",
     "DatasetDeClassificacao",
     "criar_loaders_classificacao",
+    "adaptar_para_classificacao",
+    "contar_treinaveis",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -250,3 +254,69 @@ def criar_loaders_classificacao(
         DataLoader(validacao, batch_size=batch_size, shuffle=False, drop_last=False),
         DataLoader(teste, batch_size=batch_size, shuffle=False, drop_last=False),
     )
+
+
+# ---------------------------------------------------------------------------
+# 3. Modelo: cabeça de classificação e congelamento
+# ---------------------------------------------------------------------------
+def adaptar_para_classificacao(
+    modelo: GPTModel,
+    num_classes: int = 2,
+    blocos_treinaveis: int | None = 1,
+    treinar_norm_final: bool = True,
+) -> GPTModel:
+    """Transforma um GPT gerador de texto em um classificador.
+
+    Duas alterações, feitas no próprio ``modelo``:
+
+    1. **Cabeça de classificação.** ``out_head`` deixa de ser
+       ``Linear(emb_dim, vocab_size)`` — uma pontuação para cada um dos 50.257
+       tokens — e passa a ser ``Linear(emb_dim, num_classes)`` — uma pontuação
+       por classe. É a única parte nova do modelo: começa com pesos aleatórios
+       e precisa ser treinada. Todo o resto continua com os pesos que já tinha.
+    2. **Congelamento.** ``requires_grad = False`` em um parâmetro faz o
+       PyTorch não calcular gradiente para ele: o otimizador não o altera.
+       Aqui todos os parâmetros são congelados e só voltam a ser treináveis a
+       cabeça nova, os últimos ``blocos_treinaveis`` blocos Transformer e,
+       se ``treinar_norm_final``, a ``final_norm``.
+
+    Por que congelar: as primeiras camadas de um modelo pré-treinado guardam
+    conhecimento geral da língua, que serve a qualquer tarefa; as últimas são
+    as mais específicas da tarefa original. Ajustar só o fim preserva o que o
+    pré-treino aprendeu, custa menos (menos gradientes a calcular e a guardar)
+    e reduz o sobreajuste em uma base de mil exemplos.
+
+    Args:
+        blocos_treinaveis: quantos blocos, contados a partir do último, ficam
+            treináveis. ``0`` treina só a cabeça (e a norma final); ``None``
+            descongela o modelo inteiro (*full fine-tuning*).
+
+    Returns:
+        O próprio ``modelo``, com ``modelo.cfg["num_classes"]`` registrado.
+    """
+    n_blocos = len(modelo.trf_blocks)
+    if blocos_treinaveis is not None and not 0 <= blocos_treinaveis <= n_blocos:
+        raise ValueError(f"blocos_treinaveis deve estar entre 0 e {n_blocos}.")
+
+    tudo_treinavel = blocos_treinaveis is None
+    for parametro in modelo.parameters():
+        parametro.requires_grad = tudo_treinavel
+
+    dispositivo = next(modelo.parameters()).device
+    modelo.out_head = nn.Linear(modelo.cfg["emb_dim"], num_classes).to(dispositivo)
+    modelo.cfg["num_classes"] = num_classes
+
+    if not tudo_treinavel:
+        for bloco in list(modelo.trf_blocks)[n_blocos - blocos_treinaveis:]:
+            for parametro in bloco.parameters():
+                parametro.requires_grad = True
+        for parametro in modelo.final_norm.parameters():
+            parametro.requires_grad = treinar_norm_final
+    return modelo
+
+
+def contar_treinaveis(modelo: nn.Module) -> tuple[int, int]:
+    """``(parâmetros treináveis, parâmetros totais)`` do modelo."""
+    total = sum(p.numel() for p in modelo.parameters())
+    treinaveis = sum(p.numel() for p in modelo.parameters() if p.requires_grad)
+    return treinaveis, total
