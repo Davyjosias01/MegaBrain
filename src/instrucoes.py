@@ -15,7 +15,8 @@ Etapas, na ordem das seções deste arquivo:
 1. **dados** — carregar a base, formatar cada exemplo como um prompt e
    dividir em treino, validação e teste;
 2. **lotes** — tokenizar e agrupar exemplos de tamanhos diferentes, com o
-   padding fora do cálculo da perda.
+   padding fora do cálculo da perda;
+3. **uso** — gerar a resposta do modelo a uma instrução.
 
 A base é a do capítulo: ``instruction-data.json``, com 1.100 exemplos em
 inglês, do repositório do livro (github.com/rasbt/LLMs-from-scratch, licença
@@ -32,6 +33,7 @@ from pathlib import Path
 import torch
 from torch.utils.data import DataLoader, Dataset
 
+from geracao import gerar
 from tokenizacao import TokenizadorBPE
 
 __all__ = [
@@ -49,6 +51,8 @@ __all__ = [
     "agrupar_lote",
     "preparar_instrucoes",
     "criar_loaders_instrucoes",
+    "montar_prompt",
+    "responder",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -294,3 +298,65 @@ def criar_loaders_instrucoes(
         DataLoader(DatasetDeInstrucoes(teste, tokenizador), batch_size=batch_size, shuffle=False,
                    drop_last=False, collate_fn=collate),
     )
+
+
+# ---------------------------------------------------------------------------
+# 3. Uso: gerar a resposta a uma instrução
+# ---------------------------------------------------------------------------
+def montar_prompt(instrucao: str | dict, entrada: str = "") -> str:
+    """Prompt de inferência: a entrada formatada seguida de ``### Response:``.
+
+    É o prompt de treino (``formatar_exemplo``) cortado exatamente onde a
+    resposta começaria. O modelo ajustado viu centenas de textos com esse
+    começo e aprendeu que o que vem a seguir é a resposta, terminada por
+    ``<|endoftext|>``.
+
+    Aceita a instrução e a entrada como textos ou um exemplo da base (o campo
+    ``output``, se houver, é ignorado).
+    """
+    exemplo = instrucao if isinstance(instrucao, dict) else {"instruction": instrucao, "input": entrada}
+    return formatar_entrada(exemplo) + MARCADOR_RESPOSTA
+
+
+@torch.no_grad()
+def responder(
+    instrucao: str | dict,
+    modelo,
+    tokenizador=None,
+    entrada: str = "",
+    dispositivo: torch.device | str = "cpu",
+    max_novos_tokens: int = 256,
+    temperatura: float = 0.0,
+    top_k: int | None = None,
+) -> str:
+    """Gera a resposta do modelo a uma instrução e devolve **só** a resposta.
+
+    1. monta o prompt (``montar_prompt``) e o tokeniza;
+    2. gera token a token com ``gerar`` (Sprint 4), parando em
+       ``<|endoftext|>`` ou depois de ``max_novos_tokens``;
+    3. descarta os tokens do prompt — a função de geração devolve o contexto
+       seguido da continuação — e decodifica o resto.
+
+    O padrão é a geração *greedy* (``temperatura=0``): para avaliar respostas
+    interessa a saída mais provável, e ela é determinística.
+
+    Um modelo **não** ajustado também recebe o prompt e gera uma continuação,
+    mas não aprendeu a parar: sem o ``<|endoftext|>``, ele segue escrevendo
+    até ``max_novos_tokens``.
+    """
+    tokenizador = tokenizador or TokenizadorBPE()
+    ids = tokenizador.encode(montar_prompt(instrucao, entrada))
+    contexto = modelo.cfg["context_length"]
+    if len(ids) >= contexto:
+        raise ValueError(
+            f"o prompt tem {len(ids)} tokens e não cabe no contexto de {contexto} do modelo."
+        )
+    entrada_ids = torch.tensor(ids, dtype=torch.long, device=dispositivo).unsqueeze(0)
+
+    treinando = modelo.training
+    modelo.eval()
+    saida = gerar(modelo, entrada_ids, max_novos_tokens, contexto,
+                  temperatura=temperatura, top_k=top_k, id_fim=ID_PADDING)
+    modelo.train(treinando)
+
+    return tokenizador.decode(saida[0, len(ids):].tolist()).strip()
