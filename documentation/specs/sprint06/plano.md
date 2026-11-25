@@ -34,7 +34,8 @@ O que já existe e será reutilizado (sem reescrever):
    classificação e `instruction-data.json` (1.100 exemplos) para as instruções. O caminho dos dados
    fica parametrizado.
 4. **Tamanho do modelo.** Classificação com o GPT-2 124M. Instruções: o livro usa o 355M; começar com
-   o 124M e subir para o 355M só se a GPU disponível comportar.
+   o 124M e subir para o 355M só se a GPU disponível comportar. **Resultado:** a sprint foi executada
+   em CPU com 7,5 GB de RAM; as instruções ficaram no 124M, com os 6 últimos blocos treináveis.
 5. **Além dos cinco entregáveis.** O enunciado tem cinco entregáveis. A task E4 (avaliação das
    respostas) vem do termo "Response Evaluation" exigido no glossário, e o bloco G (documentação e
    integração final) vem da introdução do enunciado e da entrega final do cronograma; ambos seguem o
@@ -75,7 +76,7 @@ antes do commit.
 | C1 | Treino base reprodutível (5 épocas, AdamW `lr = 5e-5`, `weight_decay = 0.1`, lote 8): grava configuração, histórico, curvas e checkpoint | `experiments/sprint06-fine-tuning/treinar_classificador.py` | executa até o fim; acurácia de validação acima de 90%; arquivos em `results-by-sprints/sprint06/` |
 | C2 | `metricas_de_classificacao(loader, modelo)`: matriz de confusão, precisão, revocação e F1, implementadas sem scikit-learn | `src/classificacao.py` | valores iguais aos calculados à mão em um exemplo pequeno; divisão por zero tratada |
 | C3 | Avaliação no conjunto de **teste**, antes × depois do fine-tuning, com exemplos de erros | `experiments/sprint06-fine-tuning/exp02_antes_e_depois.py` | gera a tabela comparativa, a matriz de confusão e a lista de mensagens classificadas errado |
-| C4 | Experimento do congelamento: só a cabeça × último bloco × todos os blocos — acurácia, parâmetros treináveis e tempo | `experiments/sprint06-fine-tuning/exp03_camadas_treinaveis.py` | gera o CSV e a figura |
+| C4 | Experimento do congelamento: só a cabeça × último bloco × 6 últimos blocos (o modelo inteiro não coube na RAM da máquina usada) — acurácia, parâmetros treináveis e tempo | `experiments/sprint06-fine-tuning/exp03_camadas_treinaveis.py` | gera o CSV e a figura |
 | C5 | Experimento do token usado na classificação: primeiro × último | `experiments/sprint06-fine-tuning/exp04_token_de_classificacao.py` | gera o CSV; a análise liga o resultado à máscara causal da Sprint 3 |
 
 ### Bloco D — dados de instruções (Entregável 5)
@@ -106,7 +107,7 @@ antes do commit.
 
 | # | Task | Arquivo | Teste |
 |---|---|---|---|
-| G1 | Glossário dos Capítulos 6 e 7, com os 14 termos exigidos no enunciado | `technical-glossary/capitulo-06-07.md` | os 14 termos presentes, no formato do README do glossário; links válidos |
+| G1 | Glossário dos Capítulos 6 e 7, com os 14 termos exigidos no enunciado | `technical-glossary/capitulo-06.md` e `capitulo-07.md` (um arquivo por capítulo, como pede o README do glossário) | os 14 termos presentes, no formato do README do glossário; links válidos |
 | G2 | Notebook didático da Sprint 6 | `notebook/sprint06-fine-tuning.ipynb` | executa do zero sem erro (`uv run jupyter nbconvert --execute`) |
 | G3 | Relatório da Sprint 6: mapeamento dos pesos, aleatório × pré-treinado, classificação (antes × depois, métricas, congelamento), instruções, limitações | `reports/sprint06-relatorio.md` | todos os links e figuras apontam para arquivos existentes |
 | G4 | READMEs: raiz (situação, entregáveis, comandos), `src/`, `experiments/`, `results-by-sprints/`, `technical-glossary/` | vários | links válidos; todos os `validar_*.py` passam |
