@@ -47,6 +47,10 @@ __all__ = [
     "criar_loaders_classificacao",
     "adaptar_para_classificacao",
     "contar_treinaveis",
+    "logits_de_classe",
+    "perda_classificacao_do_lote",
+    "perda_classificacao_do_loader",
+    "acuracia_do_loader",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -320,3 +324,103 @@ def contar_treinaveis(modelo: nn.Module) -> tuple[int, int]:
     total = sum(p.numel() for p in modelo.parameters())
     treinaveis = sum(p.numel() for p in modelo.parameters() if p.requires_grad)
     return treinaveis, total
+
+
+# ---------------------------------------------------------------------------
+# 4. Avaliação: perda e acurácia
+# ---------------------------------------------------------------------------
+def logits_de_classe(
+    modelo: nn.Module, entrada: torch.Tensor, posicao: int = -1
+) -> torch.Tensor:
+    """``(b, L)`` token IDs -> ``(b, num_classes)``: os logits de **uma** posição.
+
+    O modelo adaptado produz ``num_classes`` logits para cada token da
+    sequência, ``(b, L, num_classes)``, mas a mensagem tem um único rótulo.
+    Usa-se a saída do **último** token (``posicao=-1``): por causa da máscara
+    causal da Sprint 3, cada posição só enxerga a si mesma e as anteriores, de
+    modo que a última é a única cujo vetor foi calculado a partir da mensagem
+    inteira. A primeira posição, ao contrário, só enxerga o primeiro token.
+
+    Nas mensagens curtas a última posição é um token de padding. Isso não
+    atrapalha: o padding fica à direita, então essa posição continua
+    enxergando todos os tokens reais que vieram antes.
+    """
+    return modelo(entrada)[:, posicao, :]
+
+
+def perda_classificacao_do_lote(
+    entrada: torch.Tensor,
+    alvo: torch.Tensor,
+    modelo: nn.Module,
+    dispositivo: torch.device | str,
+    posicao: int = -1,
+) -> torch.Tensor:
+    """Entropia cruzada entre os logits de classe e os rótulos do lote.
+
+    É a mesma função de perda do treinamento da Sprint 5. O que muda é o que
+    está sendo previsto: lá, um token entre 50.257 em cada posição; aqui, uma
+    classe entre ``num_classes`` para a mensagem inteira.
+    """
+    entrada, alvo = entrada.to(dispositivo), alvo.to(dispositivo)
+    return nn.functional.cross_entropy(logits_de_classe(modelo, entrada, posicao), alvo)
+
+
+@torch.no_grad()
+def perda_classificacao_do_loader(
+    loader,
+    modelo: nn.Module,
+    dispositivo: torch.device | str,
+    num_lotes: int | None = None,
+    posicao: int = -1,
+) -> float:
+    """Perda média sobre os lotes do loader (os ``num_lotes`` primeiros, se informado).
+
+    Roda em ``eval()`` e devolve o modelo ao modo em que estava. Loader vazio
+    resulta em ``nan``.
+    """
+    if len(loader) == 0:
+        return float("nan")
+    num_lotes = len(loader) if num_lotes is None else min(num_lotes, len(loader))
+    treinando = modelo.training
+    modelo.eval()
+    total = 0.0
+    for i, (entrada, alvo) in enumerate(loader):
+        if i >= num_lotes:
+            break
+        total += perda_classificacao_do_lote(entrada, alvo, modelo, dispositivo, posicao).item()
+    modelo.train(treinando)
+    return total / num_lotes
+
+
+@torch.no_grad()
+def acuracia_do_loader(
+    loader,
+    modelo: nn.Module,
+    dispositivo: torch.device | str,
+    num_lotes: int | None = None,
+    posicao: int = -1,
+) -> float:
+    """Fração de exemplos classificados corretamente (*classification accuracy*).
+
+    A classe prevista é a de maior logit (``argmax``). Não é preciso aplicar o
+    softmax: ele preserva a ordem dos logits. A acurácia é a métrica que
+    interessa, mas não serve de função de perda porque não é diferenciável —
+    uma mudança pequena nos pesos quase nunca muda o ``argmax``, então o
+    gradiente seria zero. Por isso treina-se com a entropia cruzada e mede-se
+    com a acurácia.
+    """
+    if len(loader) == 0:
+        return float("nan")
+    num_lotes = len(loader) if num_lotes is None else min(num_lotes, len(loader))
+    treinando = modelo.training
+    modelo.eval()
+    corretos, exemplos = 0, 0
+    for i, (entrada, alvo) in enumerate(loader):
+        if i >= num_lotes:
+            break
+        entrada, alvo = entrada.to(dispositivo), alvo.to(dispositivo)
+        previsto = logits_de_classe(modelo, entrada, posicao).argmax(dim=-1)
+        corretos += (previsto == alvo).sum().item()
+        exemplos += alvo.numel()
+    modelo.train(treinando)
+    return corretos / exemplos
