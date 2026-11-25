@@ -52,6 +52,7 @@ __all__ = [
     "perda_classificacao_do_loader",
     "acuracia_do_loader",
     "treinar_classificador",
+    "classificar_texto",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -505,3 +506,58 @@ def treinar_classificador(
 
     modelo.eval()
     return historico
+
+
+# ---------------------------------------------------------------------------
+# 6. Uso: classificar um texto novo
+# ---------------------------------------------------------------------------
+@torch.no_grad()
+def classificar_texto(
+    texto: str,
+    modelo: nn.Module,
+    tokenizador=None,
+    dispositivo: torch.device | str = "cpu",
+    max_length: int | None = None,
+    id_padding: int = ID_PADDING,
+    nomes: list[str] | None = None,
+    posicao: int = -1,
+) -> tuple[str, dict[str, float]]:
+    """Classifica um texto e devolve ``(classe, probabilidades)``.
+
+    O texto passa pelo mesmo preparo dos dados de treino: tokenização,
+    truncamento e padding até ``max_length``. Informe o ``max_length`` usado
+    no treino (``loader.dataset.max_length``): o modelo foi ajustado lendo a
+    classe em uma posição precedida de padding, e convém repetir essa condição
+    na inferência. O comprimento nunca passa do ``context_length`` do modelo.
+
+    O softmax transforma os dois logits em probabilidades que somam 1. Elas
+    indicam a confiança do modelo na previsão, mas não são calibradas: 0,99
+    não significa que ele acerta 99% das vezes em que diz isso.
+
+    >>> classe, probabilidades = classificar_texto("You won a prize!", modelo, max_length=188)
+    >>> classe, probabilidades                               # doctest: +SKIP
+    ('spam', {'não spam': 0.03, 'spam': 0.97})
+    """
+    tokenizador = tokenizador or TokenizadorBPE()
+    nomes = nomes or NOMES_DAS_CLASSES
+    contexto = modelo.cfg["context_length"]
+    limite = min(max_length, contexto) if max_length is not None else contexto
+
+    ids = tokenizador.encode(texto)[:limite]
+    if not ids:
+        raise ValueError("o texto está vazio.")
+    if max_length is not None:  # sem max_length, o texto vai sem padding
+        ids = ids + [id_padding] * (limite - len(ids))
+    entrada = torch.tensor(ids, dtype=torch.long, device=dispositivo).unsqueeze(0)
+
+    treinando = modelo.training
+    modelo.eval()
+    probabilidades = torch.softmax(logits_de_classe(modelo, entrada, posicao)[0], dim=-1)
+    modelo.train(treinando)
+
+    if len(nomes) != probabilidades.numel():
+        raise ValueError(
+            f"o modelo tem {probabilidades.numel()} classes e foram dados {len(nomes)} nomes."
+        )
+    classe = nomes[int(probabilidades.argmax())]
+    return classe, {nome: float(p) for nome, p in zip(nomes, probabilidades)}
