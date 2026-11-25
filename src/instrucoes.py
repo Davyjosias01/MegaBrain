@@ -16,7 +16,8 @@ Etapas, na ordem das seções deste arquivo:
    dividir em treino, validação e teste;
 2. **lotes** — tokenizar e agrupar exemplos de tamanhos diferentes, com o
    padding fora do cálculo da perda;
-3. **uso** — gerar a resposta do modelo a uma instrução.
+3. **uso** — gerar a resposta do modelo a uma instrução;
+4. **avaliação** — comparar as respostas geradas com as esperadas.
 
 A base é a do capítulo: ``instruction-data.json``, com 1.100 exemplos em
 inglês, do repositório do livro (github.com/rasbt/LLMs-from-scratch, licença
@@ -26,7 +27,9 @@ Apache 2.0).
 from __future__ import annotations
 
 import json
+import re
 import urllib.request
+from collections import Counter
 from functools import partial
 from pathlib import Path
 
@@ -53,6 +56,10 @@ __all__ = [
     "criar_loaders_instrucoes",
     "montar_prompt",
     "responder",
+    "normalizar_texto",
+    "correspondencia_exata",
+    "f1_de_palavras",
+    "avaliar_respostas",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -360,3 +367,81 @@ def responder(
     modelo.train(treinando)
 
     return tokenizador.decode(saida[0, len(ids):].tolist()).strip()
+
+
+# ---------------------------------------------------------------------------
+# 4. Avaliação das respostas
+# ---------------------------------------------------------------------------
+# Na classificação bastava comparar a classe prevista com o rótulo. Aqui a
+# saída é um texto livre, e a mesma resposta correta pode ser escrita de várias
+# formas ("The capital is Paris." / "Paris is the capital."). Não existe uma
+# métrica automática que resolva isso por completo:
+#
+# - a perda de validação mede a probabilidade da resposta esperada, não a
+#   qualidade do que o modelo de fato gera;
+# - as métricas de sobreposição abaixo são objetivas e reproduzíveis, mas
+#   medem semelhança de palavras, não correção — penalizam uma paráfrase
+#   certa e premiam uma resposta errada que reaproveite as palavras da
+#   pergunta;
+# - a leitura humana das respostas é a referência, mas não escala;
+# - o capítulo usa um segundo LLM como juiz, que dá uma nota de 0 a 100. Não
+#   foi adotado aqui porque exigiria um modelo pronto de terceiros, fora da
+#   proposta do projeto.
+#
+# O projeto combina as métricas de sobreposição com a leitura de uma amostra.
+def normalizar_texto(texto: str) -> list[str]:
+    """Minúsculas, sem pontuação, dividido em palavras.
+
+    Tira da comparação as diferenças que não mudam o conteúdo: caixa, ponto
+    final, aspas, espaços repetidos.
+    """
+    return re.findall(r"[a-z0-9]+(?:'[a-z]+)?", texto.lower())
+
+
+def correspondencia_exata(resposta: str, esperada: str) -> bool:
+    """``True`` se as duas respostas têm as mesmas palavras, na mesma ordem (*exact match*)."""
+    return normalizar_texto(resposta) == normalizar_texto(esperada)
+
+
+def f1_de_palavras(resposta: str, esperada: str) -> float:
+    """F1 da sobreposição de palavras entre a resposta gerada e a esperada.
+
+    Conta as palavras em comum (com repetição, sem considerar a ordem) e
+    calcula:
+
+    - precisão: fração das palavras **geradas** que estão na esperada;
+    - revocação: fração das palavras **esperadas** que foram geradas;
+    - F1: média harmônica das duas.
+
+    Vale 1 para respostas com as mesmas palavras e 0 quando não há nenhuma em
+    comum. Uma resposta longa demais perde precisão; uma curta demais perde
+    revocação.
+    """
+    geradas, esperadas = normalizar_texto(resposta), normalizar_texto(esperada)
+    if not geradas or not esperadas:
+        return float(geradas == esperadas)
+    em_comum = sum((Counter(geradas) & Counter(esperadas)).values())
+    if em_comum == 0:
+        return 0.0
+    precisao, revocacao = em_comum / len(geradas), em_comum / len(esperadas)
+    return 2 * precisao * revocacao / (precisao + revocacao)
+
+
+def avaliar_respostas(pares: list[tuple[str, str]]) -> dict[str, float]:
+    """Médias das métricas sobre pares ``(resposta gerada, resposta esperada)``.
+
+    Returns:
+        ``{"exemplos", "correspondencia_exata", "f1_de_palavras", "palavras_geradas",
+        "palavras_esperadas"}`` — as duas últimas são os comprimentos médios,
+        que mostram se o modelo responde no tamanho certo ou não sabe parar.
+    """
+    if not pares:
+        raise ValueError("nenhum par de respostas para avaliar.")
+    n = len(pares)
+    return {
+        "exemplos": n,
+        "correspondencia_exata": sum(correspondencia_exata(r, e) for r, e in pares) / n,
+        "f1_de_palavras": sum(f1_de_palavras(r, e) for r, e in pares) / n,
+        "palavras_geradas": sum(len(normalizar_texto(r)) for r, _ in pares) / n,
+        "palavras_esperadas": sum(len(normalizar_texto(e)) for _, e in pares) / n,
+    }
