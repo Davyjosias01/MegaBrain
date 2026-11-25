@@ -1,0 +1,9 @@
+modelo,estrategia,distinct_2,repeticao_3
+aleatório,greedy,1.0000,0.0000
+aleatório,"T=1,0 top-k=50",1.0000,0.0000
+aleatório,"T=1,5 top-k=50",1.0000,0.0000
+aleatório,amostragem pura,1.0000,0.0000
+pré-treinado (GPT-2 124M),greedy,0.4872,0.4474
+pré-treinado (GPT-2 124M),"T=1,0 top-k=50",0.9829,0.0000
+pré-treinado (GPT-2 124M),"T=1,5 top-k=50",0.9744,0.0000
+pré-treinado (GPT-2 124M),amostragem pura,0.9915,0.0000

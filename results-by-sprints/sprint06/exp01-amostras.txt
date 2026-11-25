@@ -1,0 +1,50 @@
+Pesos aleatórios × pesos pré-treinados — mesma arquitetura
+Contexto: 'Every effort moves you', 40 tokens, semente 123
+
+======================================================================
+aleatório
+======================================================================
+Cinco próximos tokens mais prováveis: 'arcity' (0.02%), 'INT' (0.02%), '..................' (0.02%), ' equ' (0.01%), ' Plane' (0.01%)
+
+[greedy]
+Every effort moves youarcity warrQu motivateYS Coreints kernel 220redited Tooth m BLACK econom soloador CostPaTesformation Chow metabolism congratTime operation Betty jump sideline imb BYU inherit boneuntilraqifiessert fluoride Incarnation weldCU
+
+[T=1,0 top-k=50]
+Every effort moves youINTKI Tories Foundationest Swansongentbike minorities Dong bottom paramed condol156 solonea pharmacide523>>\ Prediction Protein monument Duke suingizable accordance RailwayVictLt fn scrambledhopenez knot rainy Qiaoific..... McCartney
+
+[T=1,5 top-k=50]
+Every effort moves youINTKI Tories Foundationest Swansongentbike minorities Dong bottom paramed condolPhotos awaits173 Kham 277encers Sultan propag lightsaberumbled Thievesectomyadsidaskas DirFish suffer announced unichopsrosc advisers convergence cooking Sail 177
+
+[amostragem pura]
+Every effort moves youenegger rendering GroundTempfinalTweetntonbanks rottorn redu commonlyition May illumーティ OpsluenceoungeIsraeli enablesvy MPHCriticalERN Scot Redmond Slate Indiana creeping ShotsXT reson Mohammadandersende scheme DemonPatrickisin
+
+
+======================================================================
+pré-treinado (GPT-2 124M)
+======================================================================
+Cinco próximos tokens mais prováveis: ' forward' (17.02%), ' to' (10.30%), ' along' (5.57%), '.' (4.99%), ',' (4.82%)
+
+[greedy]
+Every effort moves you forward.
+
+The first step is to understand the importance of your work.
+
+The second step is to understand the importance of your work.
+
+The third step is to understand the importance
+
+[T=1,0 top-k=50]
+Every effort moves you toward finding an ideal life. You don't have to accept your problems by trying to remedy them, because that would be foolish."
+
+A large number of millennials who want to follow the same path
+
+[T=1,5 top-k=50]
+Every effort moves you toward finding an ideal new way to practice something!
+
+What makes us want to be on top of that?
+
+As much as our intuition makes us try a lot, that intuitive part goes
+
+[amostragem pura]
+Every effort moves you toward rendering an object. Animations don't have to reveal your state by itself; they could even be passed to the drawing itself. Unfortunately, this doesn't ever cover the past updates and frequently found
+
