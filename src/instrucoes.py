@@ -26,10 +26,11 @@ from __future__ import annotations
 
 import json
 import urllib.request
+from functools import partial
 from pathlib import Path
 
 import torch
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 
 from tokenizacao import TokenizadorBPE
 
@@ -46,6 +47,8 @@ __all__ = [
     "INDICE_IGNORADO",
     "DatasetDeInstrucoes",
     "agrupar_lote",
+    "preparar_instrucoes",
+    "criar_loaders_instrucoes",
 ]
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -247,3 +250,47 @@ def agrupar_lote(
         entradas.append(entrada)
         alvos.append(alvo)
     return torch.stack(entradas).to(dispositivo), torch.stack(alvos).to(dispositivo)
+
+
+def preparar_instrucoes(
+    pasta: Path | str = PASTA_INSTRUCOES,
+) -> tuple[list[dict], list[dict], list[dict]]:
+    """Executa a seção 1 inteira: baixa, remove repetições e divide.
+
+    Returns:
+        ``(treino, validacao, teste)``, listas de exemplos.
+    """
+    dados = remover_instrucoes_repetidas(carregar_instrucoes(baixar_base_instrucoes(pasta)))
+    return dividir_instrucoes(dados)
+
+
+def criar_loaders_instrucoes(
+    treino: list[dict],
+    validacao: list[dict],
+    teste: list[dict],
+    tokenizador=None,
+    batch_size: int = 8,
+    max_length: int = 1024,
+    semente: int = 123,
+) -> tuple[DataLoader, DataLoader, DataLoader]:
+    """Loaders de treino, validação e teste, com ``agrupar_lote`` como collate.
+
+    ``max_length`` deve ser o ``context_length`` do modelo. Os lotes saem com
+    comprimentos diferentes entre si (o do maior exemplo de cada um) e são
+    compatíveis com ``perda_do_lote`` e ``treinar_modelo`` da Sprint 5, que
+    recebem pares ``(entrada, alvo)`` e calculam a entropia cruzada — a qual
+    ignora os alvos marcados com -100.
+
+    Só o loader de treino embaralha e descarta o último lote incompleto.
+    """
+    tokenizador = tokenizador or TokenizadorBPE()
+    collate = partial(agrupar_lote, max_length=max_length)
+    gerador = torch.Generator().manual_seed(semente)
+    return (
+        DataLoader(DatasetDeInstrucoes(treino, tokenizador), batch_size=batch_size, shuffle=True,
+                   drop_last=True, collate_fn=collate, generator=gerador),
+        DataLoader(DatasetDeInstrucoes(validacao, tokenizador), batch_size=batch_size, shuffle=False,
+                   drop_last=False, collate_fn=collate),
+        DataLoader(DatasetDeInstrucoes(teste, tokenizador), batch_size=batch_size, shuffle=False,
+                   drop_last=False, collate_fn=collate),
+    )
