@@ -64,10 +64,11 @@ Ao final do projeto, espera-se ser capaz de:
 
 ---
 
-## Pipeline que será construído
+## Pipeline construído
 
 Cada sprint acrescenta uma etapa ao pipeline abaixo, e os componentes das etapas anteriores são
-reaproveitados e integrados às seguintes. Ao final, todo o caminho estará implementado neste repositório.
+reaproveitados e integrados às seguintes. Todo o caminho está implementado neste repositório e pode ser
+percorrido de ponta a ponta com `uv run python src/demonstracao_pipeline.py`.
 
 ```mermaid
 flowchart LR
@@ -112,9 +113,9 @@ Toda sprint segue o mesmo ciclo de trabalho, definido pelo componente curricular
 
 | Diretório | Conteúdo |
 |---|---|
-| [`src/`](src/) | Código-fonte dos componentes do LLM (tokenizador, embeddings, atenção, blocos Transformer, modelo GPT, treinamento) |
+| [`src/`](src/) | Código-fonte dos componentes do LLM (tokenizador, embeddings, atenção, blocos Transformer, modelo GPT, treinamento, pesos pré-treinados e fine-tuning) |
 | [`notebook/`](notebook/) | Notebooks Jupyter de exploração, demonstração e visualização de cada etapa |
-| [`sprints/`](sprints/) | Corpus `the-verdict.txt`, usado desde a Sprint 2 |
+| [`sprints/`](sprints/) | Corpus `the-verdict.txt`, usado desde a Sprint 2, e as bases da Sprint 6 em `sprints/dados/` (spam e instruções) |
 | [`technical-glossary/`](technical-glossary/) | Glossário técnico cumulativo, organizado por capítulo |
 | [`documentation/`](documentation/) | Material de referência: descrição do projeto, instruções de cada sprint e documentos de apoio |
 | [`experiments/`](experiments/) | Experimentos de variação de parâmetros, configurações e dados |
@@ -208,7 +209,8 @@ Se todas as verificações forem aprovadas, o ambiente está pronto para as pró
 | Sprint 3 — Capítulo 3 | Concluída |
 | Sprint 4 — Capítulo 4 | Concluída |
 | Sprint 5 — Capítulo 5 | Concluída |
-| Sprint 6 | Não iniciada |
+| Sprint 6 — Capítulos 6 e 7 | Concluída |
+| Entrega final | Concluída — [relatório técnico final](reports/relatorio-final.md) e [glossário consolidado](technical-glossary/glossario-consolidado.md) |
 
 As instruções de cada sprint estão em [`documentation/instrucoes-sprints/`](documentation/instrucoes-sprints/).
 
@@ -313,6 +315,48 @@ uv run python experiments/sprint05-treinamento/treinar_base.py   # treino base +
 ```bash
 cd experiments/sprint05-treinamento && uv run python executar_todos.py
 ```
+
+**Sprint 6 — pesos pré-treinados e fine-tuning.** Os pesos do GPT-2 124M publicados pela OpenAI são
+carregados no mesmo `GPTModel` da Sprint 4 (perplexidade 58.916 → 41,9 em relação aos pesos aleatórios) e
+o modelo é ajustado a duas tarefas: classificar SMS como spam (acurácia no teste 45,4% → 98,1%, F1 0,979)
+e responder a instruções (perda de validação 4,10 → 0,78). Tudo executado em CPU.
+
+| Entregável | Onde |
+|---|---|
+| 1. Glossário dos Capítulos 6 e 7 | [`capitulo-06.md`](technical-glossary/capitulo-06.md), [`capitulo-07.md`](technical-glossary/capitulo-07.md) |
+| 2. Carregamento de pesos pré-treinados | [`src/pesos_pretreinados.py`](src/pesos_pretreinados.py) |
+| 3. Fine-tuning de classificação | [`src/classificacao.py`](src/classificacao.py); [`treinar_classificador.py`](experiments/sprint06-fine-tuning/treinar_classificador.py) |
+| 4. Avaliação do classificador | experimentos 02 a 04 em [`experiments/sprint06-fine-tuning/`](experiments/sprint06-fine-tuning/) |
+| 5. Fine-tuning de instruções | [`src/instrucoes.py`](src/instrucoes.py); [`treinar_instrucoes.py`](experiments/sprint06-fine-tuning/treinar_instrucoes.py); experimentos 05 e 06 |
+| Validação | [`src/validar_fine_tuning.py`](src/validar_fine_tuning.py) |
+| Notebook didático | [`notebook/sprint06-fine-tuning.ipynb`](notebook/sprint06-fine-tuning.ipynb) |
+| Curvas, tabelas, respostas geradas e logs | [`results-by-sprints/sprint06/`](results-by-sprints/sprint06/) |
+| Documentação e análise | [`reports/sprint06-relatorio.md`](reports/sprint06-relatorio.md) |
+
+```bash
+uv run python src/validar_fine_tuning.py                       # 56 verificações
+```
+
+```bash
+uv run python experiments/sprint06-fine-tuning/treinar_classificador.py   # ~40 min em CPU
+```
+
+```bash
+uv run python experiments/sprint06-fine-tuning/treinar_instrucoes.py      # ~15 min em CPU
+```
+
+**Entrega final.** O pipeline completo — texto, tokens, embeddings, atenção, GPT, treinamento, geração,
+pesos pré-treinados e fine-tuning — roda de ponta a ponta com os módulos de `src/`:
+
+```bash
+uv run python src/demonstracao_pipeline.py
+```
+
+| Entregável | Onde |
+|---|---|
+| Relatório técnico final | [`reports/relatorio-final.md`](reports/relatorio-final.md) |
+| Glossário consolidado (160 termos, Capítulos 1 a 7) | [`technical-glossary/glossario-consolidado.md`](technical-glossary/glossario-consolidado.md) |
+| Integração do pipeline | [`src/demonstracao_pipeline.py`](src/demonstracao_pipeline.py) |
 
 ---
 

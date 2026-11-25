@@ -26,6 +26,7 @@ results-by-sprints/
 | [`sprint03/`](sprint03/) | 3 | 13 figuras das matrizes de atenção e dos experimentos, 10 tabelas `.csv` e o log de execução com o ambiente utilizado |
 | [`sprint04/`](sprint04/) | 4 | 8 figuras dos experimentos da arquitetura GPT e da geração, 10 tabelas `.csv` e o log de execução com o ambiente e a configuração-base |
 | [`sprint05/`](sprint05/) | 5 | Treino base (configuração, histórico de perdas e perplexidades, amostras por época, curvas e log), 6 figuras e 6 tabelas dos experimentos, amostras de geração e o log de execução. O checkpoint `base-modelo.pt` (1,95 GB) não é versionado |
+| [`sprint06/`](sprint06/) | 6 | Treino do classificador e do modelo de instruções (configuração, histórico, curvas, amostras e logs), 7 figuras e 8 tabelas dos experimentos, mensagens classificadas errado, as 107 respostas de teste (`exp05-respostas-de-teste.json`) e a amostra para leitura. Os pesos do GPT-2 e os checkpoints ajustados ficam em `modelos/`, não versionada |
 
 ## Convenções
 

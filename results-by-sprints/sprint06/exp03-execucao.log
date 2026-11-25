@@ -1,0 +1,14 @@
+
+==========================================================================
+Experimento 03 — camadas treináveis
+==========================================================================
+  só a cabeça: validação 86.92%, teste 83.59%, 32.0 min
+  último bloco: validação 96.92%, teste 98.09%, 40.0 min
+  metade do modelo: validação 97.69%, teste 99.24%, 53.7 min
+  configuracao      treinaveis  fracao_treinavel  acuracia_validacao  acuracia_teste  tempo_min  origem                  
+  ----------------  ----------  ----------------  ------------------  --------------  ---------  ------------------------
+  só a cabeça       1538        0.0000            0.8692              0.8359          32.0467    este experimento        
+  último bloco      7090946     0.0570            0.9692              0.9809          40.0233    treinar_classificador.py
+  metade do modelo  42530306    0.3418            0.9769              0.9924          53.6838    este experimento        
+  tabela -> results-by-sprints/sprint06/exp03-camadas-treinaveis.csv
+  figura -> results-by-sprints/sprint06/exp03-camadas-treinaveis.png

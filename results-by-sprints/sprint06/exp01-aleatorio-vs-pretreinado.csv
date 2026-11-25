@@ -1,0 +1,3 @@
+modelo,parametros,contexto,perda,perplexidade,proximo_token,prob_proximo
+aleatório,163037184,1024,10.9839,58916.3230,'arcity',0.0002
+pré-treinado (GPT-2 124M),163037184,1024,3.7355,41.9080,' forward',0.1702

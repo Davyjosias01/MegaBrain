@@ -1,0 +1,4 @@
+configuracao,treinaveis,fracao_treinavel,acuracia_validacao,acuracia_teste,tempo_min,origem
+só a cabeça,1538,0.0000,0.8692,0.8359,32.0467,este experimento
+último bloco,7090946,0.0570,0.9692,0.9809,40.0233,treinar_classificador.py
+metade do modelo,42530306,0.3418,0.9769,0.9924,53.6838,este experimento

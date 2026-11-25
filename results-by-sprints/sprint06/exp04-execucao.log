@@ -1,0 +1,11 @@
+
+==========================================================================
+Experimento 04 — token usado na classificação
+==========================================================================
+  posicao         tokens_visiveis   acuracia_validacao  acuracia_teste  tempo_min  origem                  
+  --------------  ----------------  ------------------  --------------  ---------  ------------------------
+  último token    mensagem inteira  0.9692              0.9809          40.0233    treinar_classificador.py
+  primeiro token  só o primeiro     0.6846              0.6450          34.0290    este experimento        
+  referência: tabela de contagem do treino, só com o primeiro token = 74.43% no teste
+  tabela -> results-by-sprints/sprint06/exp04-token-de-classificacao.csv
+  figura -> results-by-sprints/sprint06/exp04-token-de-classificacao.png

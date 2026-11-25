@@ -1,0 +1,335 @@
+"""Pesos pré-treinados do GPT-2 no ``GPTModel`` — Sprint 6 (seção 5.5).
+
+Até a Sprint 5 os pesos do modelo vinham de dois lugares: da inicialização
+aleatória ou do nosso próprio treinamento em um conto de 20 mil caracteres.
+Aqui eles vêm de fora: são os parâmetros que a OpenAI obteve treinando o GPT-2
+em cerca de 40 GB de texto, publicados junto com o artigo do modelo.
+
+Usar esses pesos não muda nada na arquitetura. O ``GPTModel`` da Sprint 4 já
+tem a forma do GPT-2; o trabalho deste módulo é só de **correspondência**:
+para cada tensor do arquivo publicado, descobrir qual parâmetro do nosso
+modelo ele preenche.
+
+Os pesos são lidos do arquivo ``model.safetensors`` do repositório
+``openai-community/gpt2`` no Hugging Face Hub — os mesmos valores dos
+checkpoints originais em TensorFlow que o livro usa, em um formato que é
+apenas um dicionário ``nome -> tensor`` e não exige instalar o TensorFlow.
+Nenhuma classe de modelo pronta é usada: o arquivo só fornece números.
+
+Correspondência entre o arquivo e o ``GPTModel`` (``i`` é o índice do bloco)::
+
+    arquivo (GPT-2)            GPTModel                              operação
+    -------------------------  ------------------------------------  ----------
+    wte.weight                 embedding.token_emb.weight            cópia
+    wpe.weight                 embedding.pos_emb.weight              cópia
+    h.i.ln_1.weight / bias     trf_blocks.i.norm1.scale / shift      cópia
+    h.i.attn.c_attn.weight     trf_blocks.i.att.W_query.weight       fatia 0, transposta
+                               trf_blocks.i.att.W_key.weight         fatia 1, transposta
+                               trf_blocks.i.att.W_value.weight       fatia 2, transposta
+    h.i.attn.c_attn.bias       trf_blocks.i.att.W_{query,key,value}.bias   fatias 0, 1, 2
+    h.i.attn.c_proj.weight     trf_blocks.i.att.out_proj.weight      transposta
+    h.i.attn.c_proj.bias       trf_blocks.i.att.out_proj.bias        cópia
+    h.i.ln_2.weight / bias     trf_blocks.i.norm2.scale / shift      cópia
+    h.i.mlp.c_fc.weight        trf_blocks.i.ff.layers.0.weight       transposta
+    h.i.mlp.c_fc.bias          trf_blocks.i.ff.layers.0.bias         cópia
+    h.i.mlp.c_proj.weight      trf_blocks.i.ff.layers.2.weight       transposta
+    h.i.mlp.c_proj.bias        trf_blocks.i.ff.layers.2.bias         cópia
+    ln_f.weight / bias         final_norm.scale / shift              cópia
+    wte.weight                 out_head.weight                       cópia
+
+Três diferenças de formato explicam as operações:
+
+- **Transposição.** O GPT-2 original implementa as camadas lineares com uma
+  classe ``Conv1D`` que guarda o peso como ``(entrada, saída)``. O
+  ``nn.Linear`` do PyTorch guarda ``(saída, entrada)``. É a mesma matriz,
+  transposta.
+- **Fatias de ``c_attn``.** No arquivo, as projeções de *query*, *key* e
+  *value* são uma única camada com saída ``3·d``. Na nossa
+  ``MultiHeadAttention`` são três ``nn.Linear`` separadas. As colunas
+  ``[0, d)``, ``[d, 2d)`` e ``[2d, 3d)`` correspondem a Q, K e V, nessa ordem.
+- **Cabeça de saída.** O GPT-2 não tem uma matriz própria para ``out_head``:
+  reutiliza a tabela de embeddings de token (*weight tying*). Por isso
+  ``wte.weight`` aparece duas vezes na tabela.
+
+O GPT-2 usa bias nas projeções Q, K e V e contexto de 1024 tokens, então o
+modelo que recebe os pesos precisa de ``qkv_bias=True`` e
+``context_length=1024`` — diferente da configuração treinada na Sprint 5.
+
+Os arquivos ``*.safetensors`` não são versionados no Git (ver ``.gitignore``).
+"""
+
+from __future__ import annotations
+
+import urllib.request
+from dataclasses import dataclass
+from pathlib import Path
+
+import torch
+from tqdm import tqdm
+
+from gpt import GPTModel, config_gpt2
+
+__all__ = [
+    "PASTA_MODELOS",
+    "REPOSITORIOS_GPT2",
+    "caminho_dos_pesos",
+    "baixar_pesos_gpt2",
+    "Correspondencia",
+    "mapa_de_parametros",
+    "eh_tensor_ignorado",
+    "ler_pesos",
+    "extrair_tensor",
+    "carregar_pesos_gpt2",
+    "config_gpt2_pretreinado",
+    "carregar_gpt2_pretreinado",
+]
+
+RAIZ = Path(__file__).resolve().parent.parent
+PASTA_MODELOS = RAIZ / "modelos"
+
+# Repositório de cada tamanho do GPT-2 no Hugging Face Hub.
+REPOSITORIOS_GPT2 = {
+    "small": "openai-community/gpt2",          # 124M — 548 MB
+    "medium": "openai-community/gpt2-medium",  # 355M — 1,5 GB
+    "large": "openai-community/gpt2-large",    # 774M — 3,2 GB
+    "xl": "openai-community/gpt2-xl",          # 1558M — 6,4 GB
+}
+
+_URL = "https://huggingface.co/{repositorio}/resolve/main/model.safetensors"
+
+
+# ---------------------------------------------------------------------------
+# 1. Download do arquivo de pesos
+# ---------------------------------------------------------------------------
+def caminho_dos_pesos(tamanho: str = "small", pasta: Path | str = PASTA_MODELOS) -> Path:
+    """Caminho local do arquivo de pesos de um tamanho do GPT-2."""
+    if tamanho not in REPOSITORIOS_GPT2:
+        raise ValueError(
+            f"tamanho desconhecido: {tamanho!r}. Opções: {sorted(REPOSITORIOS_GPT2)}."
+        )
+    return Path(pasta) / f"gpt2-{tamanho}.safetensors"
+
+
+def baixar_pesos_gpt2(
+    tamanho: str = "small", pasta: Path | str = PASTA_MODELOS, mostrar_progresso: bool = True
+) -> Path:
+    """Baixa os pesos do GPT-2 uma única vez e devolve o caminho do arquivo.
+
+    Se o arquivo já existe em ``pasta``, nada é baixado. O download é gravado
+    primeiro em um arquivo ``.part`` e só renomeado ao terminar, de modo que
+    uma interrupção não deixa para trás um arquivo incompleto com o nome final.
+    """
+    destino = caminho_dos_pesos(tamanho, pasta)
+    if destino.exists():
+        return destino
+
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    parcial = destino.with_suffix(destino.suffix + ".part")
+    url = _URL.format(repositorio=REPOSITORIOS_GPT2[tamanho])
+    requisicao = urllib.request.Request(url, headers={"User-Agent": "python-urllib"})
+
+    with urllib.request.urlopen(requisicao) as resposta, open(parcial, "wb") as arquivo:
+        total = int(resposta.headers.get("Content-Length", 0)) or None
+        with tqdm(
+            total=total, unit="B", unit_scale=True, desc=destino.name,
+            disable=not mostrar_progresso,
+        ) as barra:
+            while bloco := resposta.read(1 << 20):
+                arquivo.write(bloco)
+                barra.update(len(bloco))
+
+    if total is not None and parcial.stat().st_size != total:
+        parcial.unlink()
+        raise OSError(f"download incompleto de {url}")
+    parcial.replace(destino)
+    return destino
+
+
+# ---------------------------------------------------------------------------
+# 2. Correspondência entre o arquivo do GPT-2 e o GPTModel
+# ---------------------------------------------------------------------------
+@dataclass(frozen=True)
+class Correspondencia:
+    """Uma linha da tabela arquivo -> modelo.
+
+    Attributes:
+        destino: nome do parâmetro no ``state_dict`` do ``GPTModel``.
+        origem: nome do tensor no arquivo do GPT-2.
+        transpor: ``True`` para pesos de ``Conv1D``, guardados como
+            ``(entrada, saída)``.
+        fatia: ``None`` para usar o tensor inteiro; 0, 1 ou 2 para ficar com o
+            terço de *query*, *key* ou *value* de ``c_attn``.
+    """
+
+    destino: str
+    origem: str
+    transpor: bool = False
+    fatia: int | None = None
+
+
+def mapa_de_parametros(cfg: dict) -> list[Correspondencia]:
+    """Tabela completa arquivo -> modelo para a configuração ``cfg``.
+
+    Cada parâmetro do ``GPTModel`` aparece exatamente uma vez como destino.
+    Os bias de Q, K e V só entram se ``cfg["qkv_bias"]`` for verdadeiro.
+    """
+    C = Correspondencia
+    mapa = [
+        C("embedding.token_emb.weight", "wte.weight"),
+        C("embedding.pos_emb.weight", "wpe.weight"),
+    ]
+    for i in range(cfg["n_layers"]):
+        bloco, h = f"trf_blocks.{i}", f"h.{i}"
+        mapa += [
+            C(f"{bloco}.norm1.scale", f"{h}.ln_1.weight"),
+            C(f"{bloco}.norm1.shift", f"{h}.ln_1.bias"),
+        ]
+        for fatia, nome in enumerate(("W_query", "W_key", "W_value")):
+            mapa.append(
+                C(f"{bloco}.att.{nome}.weight", f"{h}.attn.c_attn.weight", True, fatia)
+            )
+            if cfg.get("qkv_bias", False):
+                mapa.append(
+                    C(f"{bloco}.att.{nome}.bias", f"{h}.attn.c_attn.bias", False, fatia)
+                )
+        mapa += [
+            C(f"{bloco}.att.out_proj.weight", f"{h}.attn.c_proj.weight", True),
+            C(f"{bloco}.att.out_proj.bias", f"{h}.attn.c_proj.bias"),
+            C(f"{bloco}.norm2.scale", f"{h}.ln_2.weight"),
+            C(f"{bloco}.norm2.shift", f"{h}.ln_2.bias"),
+            C(f"{bloco}.ff.layers.0.weight", f"{h}.mlp.c_fc.weight", True),
+            C(f"{bloco}.ff.layers.0.bias", f"{h}.mlp.c_fc.bias"),
+            C(f"{bloco}.ff.layers.2.weight", f"{h}.mlp.c_proj.weight", True),
+            C(f"{bloco}.ff.layers.2.bias", f"{h}.mlp.c_proj.bias"),
+        ]
+    mapa += [
+        C("final_norm.scale", "ln_f.weight"),
+        C("final_norm.shift", "ln_f.bias"),
+        C("out_head.weight", "wte.weight"),
+    ]
+    return mapa
+
+
+def eh_tensor_ignorado(nome: str) -> bool:
+    """Tensores do arquivo que não são pesos treinados.
+
+    ``h.i.attn.bias`` e ``h.i.attn.masked_bias`` são, apesar do nome, a máscara
+    causal e a constante usada para mascarar — equivalentes ao buffer ``mask``
+    da nossa ``MultiHeadAttention``, que é recriado na construção do modelo.
+    ``lm_head.weight``, quando presente, é uma cópia de ``wte.weight``.
+    """
+    return nome.endswith((".attn.bias", ".attn.masked_bias")) or nome == "lm_head.weight"
+
+
+# ---------------------------------------------------------------------------
+# 3. Leitura do arquivo e cópia dos pesos para o modelo
+# ---------------------------------------------------------------------------
+def ler_pesos(caminho: Path | str) -> dict[str, torch.Tensor]:
+    """Lê um arquivo ``.safetensors`` como um dicionário ``nome -> tensor``.
+
+    Algumas versões do arquivo trazem os nomes com o prefixo ``transformer.``;
+    ele é removido para que os nomes fiquem iguais aos da tabela do módulo.
+    """
+    from safetensors.torch import load_file
+
+    pesos = load_file(str(caminho))
+    return {nome.removeprefix("transformer."): tensor for nome, tensor in pesos.items()}
+
+
+def extrair_tensor(pesos: dict[str, torch.Tensor], c: Correspondencia) -> torch.Tensor:
+    """Aplica a uma linha da tabela as operações de fatia e de transposição.
+
+    A fatia é feita na **última** dimensão do tensor do arquivo: para o peso
+    de ``c_attn``, de forma ``(d, 3d)``, são as colunas; para o bias, de forma
+    ``(3d,)``, são os elementos. A transposição vem depois, levando o peso de
+    ``(d, d)`` no formato ``Conv1D`` para o formato do ``nn.Linear``.
+    """
+    if c.origem not in pesos:
+        raise ValueError(f"o arquivo de pesos não contém o tensor {c.origem!r}.")
+    tensor = pesos[c.origem]
+    if c.fatia is not None:
+        if tensor.shape[-1] % 3 != 0:
+            raise ValueError(
+                f"{c.origem!r} tem {tensor.shape[-1]} colunas, que não se dividem em Q, K e V."
+            )
+        d = tensor.shape[-1] // 3
+        tensor = tensor[..., c.fatia * d : (c.fatia + 1) * d]
+    if c.transpor:
+        tensor = tensor.T
+    return tensor
+
+
+def carregar_pesos_gpt2(modelo: GPTModel, pesos: dict[str, torch.Tensor]) -> GPTModel:
+    """Copia os pesos do GPT-2 para um ``GPTModel``, conferindo cada forma.
+
+    Nada é copiado antes de todas as conferências passarem, de modo que um
+    erro não deixa o modelo com parte dos pesos trocada. São erros:
+
+    - um tensor do arquivo que a tabela não usa (por exemplo, os bias de
+      ``c_attn`` quando o modelo foi criado com ``qkv_bias=False``);
+    - um tensor cuja forma difere da do parâmetro de destino (por exemplo,
+      ``context_length`` diferente de 1024 ou ``emb_dim`` de outro tamanho).
+
+    Returns:
+        O próprio ``modelo``, com os pesos carregados.
+    """
+    mapa = mapa_de_parametros(modelo.cfg)
+
+    usados = {c.origem for c in mapa}
+    sobrando = sorted(n for n in pesos if n not in usados and not eh_tensor_ignorado(n))
+    if sobrando:
+        raise ValueError(
+            f"{len(sobrando)} tensores do arquivo ficaram sem destino no modelo "
+            f"(por exemplo {sobrando[0]!r}). Confira n_layers e qkv_bias=True na configuração."
+        )
+
+    destino = modelo.state_dict()
+    tensores = {}
+    for c in mapa:
+        tensor = extrair_tensor(pesos, c)
+        if tensor.shape != destino[c.destino].shape:
+            raise ValueError(
+                f"forma incompatível em {c.destino!r}: o modelo espera "
+                f"{tuple(destino[c.destino].shape)} e {c.origem!r} fornece {tuple(tensor.shape)}."
+            )
+        tensores[c.destino] = tensor
+
+    # Os tensores de state_dict() compartilham memória com os parâmetros.
+    with torch.no_grad():
+        for nome, tensor in tensores.items():
+            destino[nome].copy_(tensor)
+    return modelo
+
+
+# ---------------------------------------------------------------------------
+# 4. Modelo pronto para inferência
+# ---------------------------------------------------------------------------
+def config_gpt2_pretreinado(tamanho: str = "small", **alteracoes) -> dict:
+    """Configuração do ``GPTModel`` compatível com os pesos publicados do GPT-2.
+
+    Em relação à configuração treinada na Sprint 5, mudam ``context_length``
+    (1024, o tamanho da tabela posicional do arquivo) e ``qkv_bias`` (``True``:
+    o GPT-2 foi treinado com bias em Q, K e V). O dropout fica em zero, que é
+    o comportamento da inferência; para o fine-tuning ele pode ser religado
+    com ``drop_rate=...``, porque não altera a forma de nenhum parâmetro.
+    """
+    cfg = config_gpt2(tamanho, context_length=1024, qkv_bias=True, drop_rate=0.0)
+    cfg.update(alteracoes)
+    return cfg
+
+
+def carregar_gpt2_pretreinado(
+    tamanho: str = "small",
+    pasta: Path | str = PASTA_MODELOS,
+    dispositivo: torch.device | str = "cpu",
+    **alteracoes,
+) -> GPTModel:
+    """Baixa (se preciso), monta o ``GPTModel`` e carrega os pesos do GPT-2.
+
+    Devolve o modelo em modo ``eval()``, pronto para inferência e geração com
+    as funções de ``geracao.py``.
+    """
+    caminho = baixar_pesos_gpt2(tamanho, pasta)
+    modelo = GPTModel(config_gpt2_pretreinado(tamanho, **alteracoes))
+    carregar_pesos_gpt2(modelo, ler_pesos(caminho))
+    return modelo.to(dispositivo).eval()

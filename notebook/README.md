@@ -23,6 +23,19 @@ duplicar a implementação. Isso mantém uma única fonte de verdade para o cód
 | [`sprint03-mecanismos-de-atencao.ipynb`](sprint03-mecanismos-de-atencao.ipynb) | 3 | Os quatro mecanismos de atenção do Capítulo 3, passo a passo, com os exercícios 3.1, 3.2 e 3.3 |
 | [`sprint04-arquitetura-gpt.ipynb`](sprint04-arquitetura-gpt.ipynb) | 4 | Do LayerNorm ao modelo GPT completo, com as formas de cada tensor, a inferência passo a passo e temperatura e top-k |
 | [`sprint05-treinamento.ipynb`](sprint05-treinamento.ipynb) | 5 | Entropia cruzada à mão, perda e perplexidade, laço de treinamento, sobreajuste, estratégias de geração com e sem treino e checkpoints |
+| [`sprint06-fine-tuning.ipynb`](sprint06-fine-tuning.ipynb) | 6 | Do arquivo de pesos do GPT-2 ao `GPTModel`, cabeça de classificação e camadas congeladas, métricas do classificador, formato do prompt e montagem dos lotes de instrução, geração e avaliação das respostas |
+| [`megabrain-colab.ipynb`](megabrain-colab.ipynb) | Extensão | Tudo em um lugar, para rodar numa GPU do Google Colab: PDFs → corpus, continuação do pré-treino nesse corpus, fine-tuning de classificação e de instruções e teste dos modelos |
+
+### Rodar no Google Colab
+
+`megabrain-colab.ipynb` clona este repositório dentro do Colab e usa o código de `src/`. Abra
+<https://colab.research.google.com/github/Davyjosias01/MegaBrain/blob/sprint-6/notebook/megabrain-colab.ipynb>
+(depois que a sprint for mesclada, troque `sprint-6` por `develop` no endereço e na variável `BRANCH` da
+primeira célula), escolha *Ambiente de execução → Alterar o tipo de ambiente de execução → GPU* e use
+*Executar tudo*. Os PDFs vão na pasta `MegaBrain/pdfs` do seu Google Drive; o corpus e os modelos
+treinados ficam em `MegaBrain/`, fora do repositório.
+
+O notebook está versionado sem saídas: elas dependem dos PDFs de quem executa.
 
 
 ## Execução

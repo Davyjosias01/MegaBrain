@@ -1,0 +1,22 @@
+
+==========================================================================
+Experimento 05 — respostas às instruções de teste (antes × depois)
+==========================================================================
+  resposta_antes: 107 respostas em 18.0 min, 46.6 tokens em média (limite 48)
+  resposta_depois: 107 respostas em 4.5 min, 12.1 tokens em média (limite 48)
+  respostas -> results-by-sprints/sprint06/exp05-respostas-de-teste.json
+
+  instrução: Combine the two sentences into a single coherent sentence. She studied hard. She passed the exam.
+    esperada: 'She studied hard, so she passed the exam.'
+    antes   : 'She passed the exam.\n\n### Output:\n\nShe passed the exam.\n\n### Error:\n\nShe passed the exam.\n\n### Error:\n\nShe pas'
+    depois  : 'She passed the exam.'
+
+  instrução: Explain the process of combustion.
+    esperada: 'Combustion is a chemical process in which a substance reacts rapidly with oxygen, releasing heat and light. It typically produces carbon dioxide, water, and energy.'
+    antes   : 'Write a response that is appropriate for the task.\n\n### Response:\n\nWrite a response that is appropriate for th'
+    depois  : 'The process of combustion is a process of combustion that occurs when a substance is heated by a process of he'
+
+  instrução: Convert the given sentence into active voice. The proposal was approved by the committee.
+    esperada: 'The committee approved the proposal.'
+    antes   : 'The proposal was approved by the committee.\n\n### Response:\n\nThe proposal was approved by the committee.\n\n### R'
+    depois  : 'The proposal was approved by the committee.'

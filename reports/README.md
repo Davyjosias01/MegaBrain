@@ -25,6 +25,8 @@ relacionados aos conceitos estudados no capítulo correspondente.
 | [`sprint03-relatorio.md`](sprint03-relatorio.md) | 3 | Mecanismos de atenção: implementação, oito experimentos e análise |
 | [`sprint04-relatorio.md`](sprint04-relatorio.md) | 4 | Arquitetura GPT: Transformer Block, modelo, inferência e geração, oito experimentos e análise |
 | [`sprint05-relatorio.md`](sprint05-relatorio.md) | 5 | Treinamento e avaliação: perda, perplexidade, treino base, seis experimentos, sobreajuste, estratégias de geração e checkpoints |
+| [`sprint06-relatorio.md`](sprint06-relatorio.md) | 6 | Pesos pré-treinados e fine-tuning: carga dos pesos do GPT-2, classificação de spam (antes × depois, métricas, congelamento), instruções (treino, respostas e avaliação) e limitações |
+| [`relatorio-final.md`](relatorio-final.md) | Entrega final | Relatório técnico do projeto: o pipeline completo, o que cada sprint construiu, principais resultados, limitações e como reproduzir |
 
 ## Convenções
 

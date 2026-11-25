@@ -1,0 +1,43 @@
+
+==========================================================================
+Sprint 6 — fine-tuning de instruções
+==========================================================================
+  data           : 2026-11-25 12:22:36
+  python / torch : 3.14.6 / 2.14.1+cu126
+  dispositivo    : cpu
+  exemplos       : treino 913 | validação 55 | teste 107
+  parâmetros     : 42,528,768 treináveis de 163,037,184
+  configuração   : {"tamanho": "small", "num_epocas": 2, "batch_size": 8, "otimizador": "AdamW", "taxa_aprendizado": 5e-05, "weight_decay": 0.1, "blocos_treinaveis": 6, "frequencia_avaliacao": 10, "lotes_avaliacao": 5, "semente": 123}
+
+  antes do ajuste: perda treino 4.014 | validação 4.096 (perplexidade 60.1)
+
+  época   1 | passo     0 | perda treino 3.801 | perda validação 3.663
+  época   1 | passo    10 | perda treino 1.644 | perda validação 1.637
+  época   1 | passo    20 | perda treino 1.214 | perda validação 1.243
+  época   1 | passo    30 | perda treino 1.052 | perda validação 1.114
+  época   1 | passo    40 | perda treino 1.028 | perda validação 1.058
+  época   1 | passo    50 | perda treino 0.991 | perda validação 1.023
+  época   1 | passo    60 | perda treino 0.853 | perda validação 0.992
+  época   1 | passo    70 | perda treino 0.860 | perda validação 0.963
+  época   1 | passo    80 | perda treino 0.799 | perda validação 0.942
+  época   1 | passo    90 | perda treino 0.822 | perda validação 0.928
+  época   1 | passo   100 | perda treino 0.814 | perda validação 0.922
+  época   1 | passo   110 | perda treino 0.842 | perda validação 0.891
+  amostra (época 1): "Below is an instruction that describes a task. Write a response that appropriately completes the request.\n\n### Instruction:\nWhat is the past tense of 'think'?\n\n### Response:\nThe past tense of 'think' is 'think'.<|endoftext|>The following is an instruction that describes a task. Write a response that appropriately completes the request.\n\n### Instruction:\nWhat is the"
+  época   2 | passo   120 | perda treino 0.787 | perda validação 0.878
+  época   2 | passo   130 | perda treino 0.702 | perda validação 0.887
+  época   2 | passo   140 | perda treino 0.717 | perda validação 0.871
+  época   2 | passo   150 | perda treino 0.764 | perda validação 0.858
+  época   2 | passo   160 | perda treino 0.681 | perda validação 0.845
+  época   2 | passo   170 | perda treino 0.658 | perda validação 0.837
+  época   2 | passo   180 | perda treino 0.583 | perda validação 0.835
+  época   2 | passo   190 | perda treino 0.624 | perda validação 0.815
+  época   2 | passo   200 | perda treino 0.544 | perda validação 0.805
+  época   2 | passo   210 | perda treino 0.551 | perda validação 0.809
+  época   2 | passo   220 | perda treino 0.638 | perda validação 0.806
+  amostra (época 2): "Below is an instruction that describes a task. Write a response that appropriately completes the request.\n\n### Instruction:\nWhat is the past tense of 'think'?\n\n### Response:\nThe past tense of 'think' is 'to think'.<|endoftext|>The U.S. Department of Agriculture (USDA) recently issued a new rule that requires all farm products to be labeled as such"
+
+  depois do ajuste: perda treino 0.599 | validação 0.780 (perplexidade 2.2)
+  tempo de treino : 14.4 min
+  checkpoint -> modelos/instrucoes-gpt2.pt
+  figura -> results-by-sprints/sprint06/instrucoes-curvas.png

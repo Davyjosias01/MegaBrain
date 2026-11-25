@@ -1,0 +1,428 @@
+Respostas do modelo ajustado no conjunto de teste, para leitura
+107 exemplos; F1 de palavras entre a resposta gerada e a esperada
+
+======================================================================
+Menor F1
+======================================================================
+
+Instrução: Name the author of 'Pride and Prejudice'.
+Esperada : Jane Austen.
+Ajustado : The author of 'Pride and Prejudice' is William Shakespeare.  [F1 0.00]
+Antes    : Name the author of 'Pride and Prejudice'.
+
+### Response:
+
+Name the author of 'Pride and Prejudice'.
+
+### Response:
+
+Name the author of 'Pride and Pre
+
+Instrução: What is the chemical symbol for mercury?
+Esperada : Hg.
+Ajustado : The chemical symbol for mercury is mercury.  [F1 0.00]
+Antes    : The chemical symbol for mercury is mercury.
+
+### Response:
+
+The chemical symbol for mercury is mercury.
+
+### Response:
+
+The chemical symbol for mercury is mercu
+
+Instrução: Translate 'Hello' into Russian.
+Esperada : Привет (Privet)
+Ajustado : The Russian translation of 'Hello' is 'Барашения' (Дарашения на полько).  [F1 0.00]
+Antes    : Hello, world!
+
+### Response:
+
+Hello, world!
+
+### Response:
+
+Hello, world!
+
+### Response:
+
+Hello, world!
+
+### Response:
+
+Hello, world
+
+Instrução: List five different types of vegetables.
+Esperada : 1. Carrot
+2. Broccoli
+3. Cucumber
+4. Tomato
+5. Spinach
+Ajustado : List five different types of vegetables.  [F1 0.00]
+Antes    : List five different types of vegetables.
+
+### Response:
+
+List five different types of vegetables.
+
+### Response:
+
+List five different types of vegetables.
+
+### 
+
+Instrução: Generate a past-tense verb that describes a person laughing.
+Esperada : Laughed.
+Ajustado : A past-tense verb that describes a person laughing is 'laughing.'  [F1 0.00]
+Antes    : Write a response that appropriately completes the request.
+
+### Response:
+
+Write a response that appropriately completes the request.
+
+### Response:
+
+Write a re
+
+Instrução: Categorize the following sentence as a statement, a question, or an exclamation.
+Entrada  : What a beautiful day!
+Esperada : Exclamation.
+Ajustado : A beautiful day is a day of rest.  [F1 0.00]
+Antes    : I'm so happy!
+
+### Response:
+
+I'm so happy!
+
+### Response:
+
+I'm so happy!
+
+### Response:
+
+I'm so happy!
+
+### Response:
+
+Instrução: Find a synonym for the given verb.
+Entrada  : Begin
+Esperada : Commence
+Ajustado : The synonym for the given verb is 'begin'.  [F1 0.00]
+Antes    : Find a synonym for the given verb.
+
+### Input:
+
+Begin
+
+### Response:
+
+Find a synonym for the given verb.
+
+### Input:
+
+Begin
+
+### Response:
+
+Instrução: Categorize the following sentence as either factual or opinion-based.
+Entrada  : Chocolate is the best dessert.
+Esperada : Opinion-based.
+Ajustado : Factual:
+Chocolate is the best dessert.  [F1 0.00]
+Antes    : The chocolate is the best dessert.
+
+### Response:
+
+The chocolate is the best dessert.
+
+### Response:
+
+The chocolate is the best dessert.
+
+### Response:
+
+The cho
+
+======================================================================
+F1 intermediário
+======================================================================
+
+Instrução: Correct the punctuation in the sentence.
+Entrada  : Its time to go home.
+Esperada : The corrected sentence should be: 'It's time to go home.'
+Ajustado : Its time to go home.  [F1 0.53]
+Antes    : I'm home.
+
+### Response:
+
+I'm home.
+
+### Response:
+
+I'm home.
+
+### Response:
+
+I'm home.
+
+### Response:
+
+I'm home
+
+Instrução: Translate 'I am lost' into Italian.
+Esperada : The Italian translation of 'I am lost' is 'Mi sono perso' (if male) or 'Mi sono persa' (if female).
+Ajustado : The Italian translation of 'I am lost' is 'I am lost.'  [F1 0.53]
+Antes    : I am lost.
+
+### Response:
+
+I am lost.
+
+### Response:
+
+I am lost.
+
+### Response:
+
+I am lost.
+
+### Response:
+
+I am lost
+
+Instrução: Convert 3 kilometers to meters.
+Esperada : 3 kilometers is 3000 meters.
+Ajustado : 3 kilometers is equal to 3.  [F1 0.55]
+Antes    : Write a response that is correct.
+
+### Response:
+
+Write a response that is correct.
+
+### Response:
+
+Write a response that is correct.
+
+### Response:
+
+Write a re
+
+Instrução: Convert 7 kilometers to meters.
+Esperada : 7 kilometers is 7000 meters.
+Ajustado : 7 kilometers is equal to 7.  [F1 0.55]
+Antes    : Write a response that is correct.
+
+### Response:
+
+Write a response that is correct.
+
+### Response:
+
+Write a response that is correct.
+
+### Response:
+
+Write a re
+
+Instrução: Classify the following numbers as prime or composite.
+Entrada  : : 11, 14, 19.
+Esperada : Prime numbers: 11, 19
+Composite numbers: 14
+Ajustado : 11, 14, 19.  [F1 0.60]
+Antes    : : 11, 14, 19.
+
+### Output:
+
+: 11, 14, 19.
+
+###
+
+###
+
+###
+
+###
+
+###
+
+###
+
+###
+
+###
+
+Instrução: Classify the following items as either solid, liquid, or gas.
+Entrada  : Mercury, oxygen, wood
+Esperada : Mercury - Liquid
+Oxygen - Gas
+Wood - Solid
+Ajustado : Solid, liquid, or gas.  [F1 0.60]
+Antes    : Mercury, oxygen, wood
+
+### Response:
+
+Mercury, oxygen, wood
+
+### Response:
+
+Mercury, oxygen, wood
+
+### Response:
+
+Mercury, oxygen, wood
+
+Instrução: What is the formula for calculating work done?
+Esperada : The formula for calculating work done is work = force × distance.
+Ajustado : The formula for calculating work done is the same as for calculating income.  [F1 0.61]
+Antes    : The formula for calculating work done is:
+
+The formula for calculating work done is:
+
+The formula for calculating work done is:
+
+The formula for calculating wor
+
+Instrução: Rewrite the sentence.
+Entrada  : The lecture was delivered in a clear manner.
+Esperada : The lecture was delivered clearly.
+Ajustado : The lecture was delivered in a clear manner.  [F1 0.62]
+Antes    : The lecture was delivered in a clear manner.
+
+### Output:
+
+The lecture was delivered in a clear manner.
+
+###
+
+###
+
+###
+
+###
+
+###
+
+###
+
+###
+
+======================================================================
+Maior F1 sem correspondência exata
+======================================================================
+
+Instrução: What is the chemical formula for ammonium nitrate?
+Esperada : The chemical formula for ammonium nitrate is NH4NO3.
+Ajustado : The chemical formula for ammonium nitrate is NaCl.  [F1 0.88]
+Antes    : The chemical formula for ammonium nitrate is:
+
+(1)
+
+(2)
+
+(3)
+
+(4)
+
+(5)
+
+(6)
+
+(7)
+
+Instrução: What is the chemical formula for magnesium sulfate?
+Esperada : The chemical formula for magnesium sulfate is MgSO4.
+Ajustado : The chemical formula for magnesium sulfate is MgSb.  [F1 0.88]
+Antes    : The chemical formula for magnesium sulfate is:
+
+MgSulfate = (1-methoxy-2-nitro-2-nitro-2-nitro-2-nitro-2-nit
+
+Instrução: Correct any spelling mistakes in the given sentence.
+Entrada  : I prefer homemade cookies to store boaght.
+Esperada : I prefer homemade cookies to store bought.
+Ajustado : I prefer homemade cookies to store boaght.  [F1 0.86]
+Antes    : I'm sorry, but I'm not sure what to do with this.
+
+### Response:
+
+I'm sorry, but I'm not sure what to do with this.
+
+### Response:
+
+I'm sorry
+
+Instrução: What is the plural form of 'child'?
+Esperada : The plural form of 'child' is 'children'.
+Ajustado : The plural form of 'child' is 'child.'  [F1 0.86]
+Antes    : What is the plural form of 'child'?
+
+### Response:
+
+What is the plural form of 'child'?
+
+### Response:
+
+What is the plural form of 'child'?
+
+### Response:
+
+Instrução: Translate 'Welcome' into German.
+Esperada : The German translation of 'Welcome' is 'Willkommen'.
+Ajustado : The German translation of 'Welcome' is 'deutsch'.  [F1 0.86]
+Antes    : Translate 'Welcome' into German.
+
+### Response:
+
+Translate 'Welcome' into German.
+
+### Response:
+
+Translate 'Welcome' into German.
+
+### Response:
+
+Translate
+
+Instrução: Provide the plural form of 'cactus'.
+Esperada : The plural form of 'cactus' is 'cacti'.
+Ajustado : The plural form of 'cactus' is 'cactus'.  [F1 0.86]
+Antes    : Provide the plural form of 'cactus'.
+
+### Response:
+
+Provide the plural form of 'cactus'.
+
+### Response:
+
+Provide the plural form of 'cactus'.
+
+###
+
+Instrução: What is the past tense of 'throw'?
+Esperada : The past tense of 'throw' is 'threw'.
+Ajustado : The past tense of 'throw' is 'throw'.  [F1 0.86]
+Antes    : What is the past tense of 'throw'?
+
+### Response:
+
+What is the past tense of 'throw'?
+
+### Response:
+
+What is the past tense of 'throw'?
+
+### Response:
+
+Instrução: What is the past tense of 'sing'?
+Esperada : The past tense of 'sing' is 'sang.'
+Ajustado : The past tense of 'sing' is 'singular'.  [F1 0.86]
+Antes    : What is the past tense of 'sing'?
+
+### Response:
+
+What is the past tense of 'sing'?
+
+### Response:
+
+What is the past tense of 'sing'?
+
+### Response:

@@ -24,6 +24,11 @@ experimentos consomem estes módulos, nunca o contrário.
 | `treinamento.py` | **Sprint 5** — avaliação e treino: `perda_do_lote`, `perda_do_loader`, `perplexidade`, `avaliar_modelo`, `treinar_modelo`, `gerar_amostra` e `ConfigTreinamento` (parâmetros do treino em JSON) |
 | `checkpoint.py` | **Sprint 5** — `salvar_checkpoint`, `carregar_checkpoint` e `retomar_treinamento`: pesos, estado do AdamW, configurações e histórico num único `.pt` |
 | `validar_treinamento.py` | **Sprint 5** — 27 verificações da avaliação, do treino e dos checkpoints |
+| `pesos_pretreinados.py` | **Sprint 6** — pesos do GPT-2 no `GPTModel`: `baixar_pesos_gpt2`, `mapa_de_parametros` (tabela arquivo → parâmetro, com transposição das `Conv1D` e divisão de `c_attn` em Q/K/V), `carregar_pesos_gpt2` (confere todas as formas antes de copiar) e `carregar_gpt2_pretreinado` |
+| `classificacao.py` | **Sprint 6** — fine-tuning de classificação: preparação da base de spam (duplicatas, balanceamento, divisão), `DatasetDeClassificacao`, `adaptar_para_classificacao` (cabeça nova e congelamento), perda e acurácia no último token, `metricas_de_classificacao` (matriz de confusão, precisão, revocação, F1), `treinar_classificador`, `classificar_texto` e `carregar_classificador` |
+| `instrucoes.py` | **Sprint 6** — fine-tuning de instruções: formato do prompt (`formatar_exemplo`, `montar_prompt`), `DatasetDeInstrucoes`, `agrupar_lote` (padding por lote, alvo deslocado, `-100`), `criar_loaders_instrucoes`, `definir_treinaveis`, `responder` e a avaliação das respostas (`correspondencia_exata`, `f1_de_palavras`, `avaliar_respostas`) |
+| `validar_fine_tuning.py` | **Sprint 6** — 56 verificações dos pesos pré-treinados e dos dois tipos de fine-tuning |
+| `demonstracao_pipeline.py` | **Integração final** — percorre as 10 etapas do projeto, do texto bruto ao modelo ajustado, usando só os módulos acima |
 
 ## Organização prevista
 
@@ -33,7 +38,7 @@ Conforme as sprints avançam, o diretório receberá os módulos correspondentes
 - **Sprint 3** *(concluída)* — mecanismos de atenção: *self-attention*, *scaled dot-product*, *causal* e *multi-head*
 - **Sprint 4** *(concluída)* — arquitetura GPT: *layer normalization*, *feed forward network*, conexões residuais e blocos Transformer
 - **Sprint 5** *(concluída)* — função de perda, perplexidade, laço de treinamento, otimizador e checkpoints; `dados.py` ganha a divisão treino/validação
-- **Sprint 6** — estratégias de *fine-tuning*
+- **Sprint 6** *(concluída)* — pesos pré-treinados do GPT-2, *fine-tuning* de classificação e de instruções, e o script de integração do pipeline
 
 ## Execução
 
@@ -45,4 +50,6 @@ uv run python src/validar_dados.py           # valida o pipeline de dados (Sprin
 uv run python src/validar_atencao.py         # valida os mecanismos de atenção (Sprint 3)
 uv run python src/validar_gpt.py             # valida a arquitetura GPT e a geração (Sprint 4)
 uv run python src/validar_treinamento.py     # valida a avaliação, o treino e os checkpoints (Sprint 5)
+uv run python src/validar_fine_tuning.py     # valida os pesos pré-treinados e o fine-tuning (Sprint 6)
+uv run python src/demonstracao_pipeline.py   # pipeline completo, do texto ao modelo ajustado (integração final)
 ```

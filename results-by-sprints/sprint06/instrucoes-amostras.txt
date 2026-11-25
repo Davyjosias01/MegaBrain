@@ -1,0 +1,14 @@
+Resposta gerada ao fim de cada época (greedy, 40 tokens) para a instrução:
+
+Below is an instruction that describes a task. Write a response that appropriately completes the request.
+
+### Instruction:
+What is the past tense of 'think'?
+
+### Response:
+
+
+Resposta esperada: The past tense of 'think' is 'thought'.
+
+Época 1: "The past tense of 'think' is 'think'.<|endoftext|>The following is an instruction that describes a task. Write a response that appropriately completes the request.\n\n### Instruction:\nWhat is the"
+Época 2: "The past tense of 'think' is 'to think'.<|endoftext|>The U.S. Department of Agriculture (USDA) recently issued a new rule that requires all farm products to be labeled as such"

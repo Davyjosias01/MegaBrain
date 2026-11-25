@@ -1,0 +1,4 @@
+posicao,tokens_visiveis,acuracia_validacao,acuracia_teste,tempo_min,origem
+último token,mensagem inteira,0.9692,0.9809,40.0233,treinar_classificador.py
+primeiro token,só o primeiro,0.6846,0.6450,34.0290,este experimento
+regra de contagem pelo primeiro token (sem modelo),só o primeiro,-,0.7443,0.0000,contagem no treino
