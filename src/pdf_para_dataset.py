@@ -68,6 +68,7 @@ def extrair_paginas(caminho: Path | str, max_paginas: int | None = None) -> list
 # 2. Limpeza
 # ---------------------------------------------------------------------------
 _SO_NUMERO = re.compile(r"^\s*(?:page|página|pág\.?)?\s*[-–—]?\s*\d{1,4}\s*[-–—]?\s*$", re.IGNORECASE)
+_SURROGATES = re.compile(r"[\ud800-\udfff]")
 _FIM_DE_FRASE = re.compile(r"[.!?:;…\"”')\]]$")
 
 
@@ -101,6 +102,9 @@ def limpar_texto(texto: str) -> str:
     4. reduz espaços repetidos e separa os parágrafos por uma linha em branco.
     """
     texto = texto.replace("\r\n", "\n").replace("\r", "\n").replace("\x00", "").replace("­", "")
+    # PDFs com fontes mal mapeadas produzem "surrogates" soltos (U+D800 a U+DFFF): não são
+    # caracteres válidos, não podem ser gravados em UTF-8 e não têm token no BPE.
+    texto = _SURROGATES.sub("", texto)
     paragrafos: list[str] = []
     atual = ""
     for linha in texto.split("\n"):

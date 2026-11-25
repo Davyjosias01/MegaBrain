@@ -44,7 +44,7 @@ __all__ = [
     "MARCADOR_RESPOSTA",
     "baixar_base_instrucoes",
     "carregar_instrucoes",
-    "remover_instrucoes_repetidas",
+    "remover_instrucoes_repetidas", "acrescentar_exemplos",
     "formatar_entrada",
     "formatar_exemplo",
     "dividir_instrucoes",
@@ -133,6 +133,75 @@ def remover_instrucoes_repetidas(dados: list[dict]) -> list[dict]:
             vistos.add(chave)
             unicos.append(exemplo)
     return unicos
+
+
+def acrescentar_exemplos(
+    treino: list[dict],
+    extras: list[dict],
+    reservados: list[dict] | tuple = (),
+    max_exemplos: int | None = None,
+    max_tokens: int | None = None,
+    tokenizador=None,
+    semente: int = 123,
+) -> tuple[list[dict], dict]:
+    """Junta exemplos de outra base ao conjunto de treino, sem contaminar a avaliação.
+
+    Mais exemplos é a forma mais direta de melhorar o fine-tuning de
+    instruções, mas juntar bases exige três cuidados, todos feitos aqui:
+
+    - um exemplo extra cuja pergunta — o par (instrução, entrada), comparado
+      sem diferenciar maiúsculas nem espaços nas pontas — está em
+      ``reservados`` (validação e teste) é **descartado**: se entrasse no
+      treino, o modelo seria avaliado numa pergunta cuja resposta já viu;
+    - perguntas repetidas, entre os extras ou já presentes no treino, entram
+      uma vez só;
+    - exemplos sem instrução ou sem resposta são descartados.
+
+    Opcionalmente, ``max_tokens`` descarta os exemplos cujo prompt completo
+    passa desse tamanho (respostas muito longas dominam o lote e o tempo de
+    treino) e ``max_exemplos`` sorteia, com ``semente``, um subconjunto dos
+    que sobraram.
+
+    Returns:
+        ``(novo_treino, relatorio)``. O treino original vem primeiro e não é
+        alterado; o relatório conta quantos extras foram recebidos, quantos
+        entraram e quantos saíram por cada motivo.
+    """
+    chave = lambda e: (e["instruction"].strip().lower(), e["input"].strip().lower())  # noqa: E731
+    proibidas = {chave(e) for e in reservados}
+    vistas = {chave(e) for e in treino}
+    relatorio = {"recebidos": len(extras), "sem_instrucao_ou_resposta": 0, "na_validacao_ou_no_teste": 0,
+                 "repetidos": 0, "longos_demais": 0, "fora_do_sorteio": 0}
+    if max_tokens is not None and tokenizador is None:
+        from tokenizacao import TokenizadorBPE
+
+        tokenizador = TokenizadorBPE()
+
+    aceitos = []
+    for exemplo in extras:
+        if set(exemplo) != {"instruction", "input", "output"}:
+            raise ValueError(f"exemplo com campos inesperados: {sorted(exemplo)}")
+        c = chave(exemplo)
+        if not exemplo["instruction"].strip() or not exemplo["output"].strip():
+            relatorio["sem_instrucao_ou_resposta"] += 1
+        elif c in proibidas:
+            relatorio["na_validacao_ou_no_teste"] += 1
+        elif c in vistas:
+            relatorio["repetidos"] += 1
+        elif max_tokens is not None and len(tokenizador.encode(formatar_exemplo(exemplo))) + 1 > max_tokens:
+            relatorio["longos_demais"] += 1
+        else:
+            vistas.add(c)
+            aceitos.append(exemplo)
+
+    if max_exemplos is not None and len(aceitos) > max_exemplos:
+        sorteio = torch.randperm(len(aceitos), generator=torch.Generator().manual_seed(semente))
+        escolhidos = sorted(sorteio[:max_exemplos].tolist())
+        relatorio["fora_do_sorteio"] = len(aceitos) - max_exemplos
+        aceitos = [aceitos[i] for i in escolhidos]
+    relatorio["acrescentados"] = len(aceitos)
+    relatorio["treino_final"] = len(treino) + len(aceitos)
+    return list(treino) + aceitos, relatorio
 
 
 def formatar_entrada(exemplo: dict) -> str:
