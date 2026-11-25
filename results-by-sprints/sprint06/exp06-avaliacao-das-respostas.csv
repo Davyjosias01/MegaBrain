@@ -1,0 +1,7 @@
+modelo,exemplos_de_teste,exemplos,correspondencia_exata,f1_de_palavras,palavras_geradas,palavras_esperadas
+pré-treinado,todos,107,0.0000,0.2029,23.8598,8.4019
+pré-treinado,com entrada,30,0.0000,0.2124,20.2000,5.8000
+pré-treinado,sem entrada,77,0.0000,0.1992,25.2857,9.4156
+ajustado,todos,107,0.0748,0.5277,8.5327,8.4019
+ajustado,com entrada,30,0.0000,0.4879,6.4333,5.8000
+ajustado,sem entrada,77,0.1039,0.5431,9.3506,9.4156
