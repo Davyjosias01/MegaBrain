@@ -1,0 +1,34 @@
+Classificador de spam antes e depois do fine-tuning
+
+Mensagens novas (fora da base), max_length = 188
+----------------------------------------------------------------------
+You are a winner you have been specially selected to receive $1000 cash or a $2000 award.
+  -> antes: spam (P(spam) = 0.995) | depois: spam (P(spam) = 0.858)
+
+Hey, just wanted to check if we're still on for dinner tonight? Let me know!
+  -> antes: spam (P(spam) = 0.994) | depois: não spam (P(spam) = 0.002)
+
+URGENT! Your account has been suspended. Reply with your PIN to restore access now.
+  -> antes: spam (P(spam) = 0.994) | depois: spam (P(spam) = 0.802)
+
+Can you send me the notes from today's class when you get home?
+  -> antes: spam (P(spam) = 0.994) | depois: não spam (P(spam) = 0.005)
+
+
+Erros no conjunto de teste depois do fine-tuning: 5 de 262
+----------------------------------------------------------------------
+[verdadeiro: spam | previsto: não spam | P(spam) = 0.138]
+This message is brought to you by GMW Ltd. and is not connected to the
+
+[verdadeiro: não spam | previsto: spam | P(spam) = 0.846]
+staff.science.nus.edu.sg/~phyhcmk/teaching/pc1323
+
+[verdadeiro: spam | previsto: não spam | P(spam) = 0.046]
+Will u meet ur dream partner soon? Is ur career off 2 a flyng start? 2 find out free, txt HORO followed by ur star sign, e. g. HORO ARIES
+
+[verdadeiro: spam | previsto: não spam | P(spam) = 0.332]
+You will be receiving this week's Triple Echo ringtone shortly. Enjoy it!
+
+[verdadeiro: spam | previsto: não spam | P(spam) = 0.010]
+Latest News! Police station toilet stolen, cops have nothing to go on!
+

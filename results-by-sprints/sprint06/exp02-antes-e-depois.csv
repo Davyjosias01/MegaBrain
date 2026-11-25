@@ -1,0 +1,3 @@
+modelo,exemplos,acuracia,precisao,revocacao,f1,vp,fp,vn,fn
+antes do fine-tuning,262,0.4542,0.4542,1.0000,0.6247,119,143,0,0
+depois do fine-tuning,262,0.9809,0.9914,0.9664,0.9787,115,1,142,4
