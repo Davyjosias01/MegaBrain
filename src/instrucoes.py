@@ -54,6 +54,7 @@ __all__ = [
     "agrupar_lote",
     "preparar_instrucoes",
     "criar_loaders_instrucoes",
+    "definir_treinaveis",
     "montar_prompt",
     "responder",
     "normalizar_texto",
@@ -305,6 +306,39 @@ def criar_loaders_instrucoes(
         DataLoader(DatasetDeInstrucoes(teste, tokenizador), batch_size=batch_size, shuffle=False,
                    drop_last=False, collate_fn=collate),
     )
+
+
+def definir_treinaveis(modelo, blocos_treinaveis: int | None = None) -> tuple[int, int]:
+    """Escolhe quais parâmetros o fine-tuning de instruções vai atualizar.
+
+    - ``None`` — o modelo inteiro, como no capítulo;
+    - ``n`` — só os ``n`` últimos blocos Transformer e a ``final_norm``. Os
+      embeddings, os primeiros blocos e a cabeça de saída ficam congelados.
+
+    Ao contrário da classificação, aqui nenhuma camada nova é criada: a cabeça
+    de saída continua sendo a do modelo de linguagem, porque a tarefa ainda é
+    prever o próximo token. Congelar parte do modelo é só uma forma de reduzir
+    o custo — cada parâmetro treinável exige memória para o gradiente e para
+    as duas médias móveis do AdamW, e a retropropagação precisa voltar até a
+    primeira camada treinável.
+
+    Returns:
+        ``(parâmetros treináveis, parâmetros totais)``.
+    """
+    n_blocos = len(modelo.trf_blocks)
+    if blocos_treinaveis is not None and not 0 < blocos_treinaveis <= n_blocos:
+        raise ValueError(f"blocos_treinaveis deve estar entre 1 e {n_blocos}, ou ser None.")
+    for parametro in modelo.parameters():
+        parametro.requires_grad = blocos_treinaveis is None
+    if blocos_treinaveis is not None:
+        for bloco in list(modelo.trf_blocks)[n_blocos - blocos_treinaveis:]:
+            for parametro in bloco.parameters():
+                parametro.requires_grad = True
+        for parametro in modelo.final_norm.parameters():
+            parametro.requires_grad = True
+    total = sum(p.numel() for p in modelo.parameters())
+    treinaveis = sum(p.numel() for p in modelo.parameters() if p.requires_grad)
+    return treinaveis, total
 
 
 # ---------------------------------------------------------------------------

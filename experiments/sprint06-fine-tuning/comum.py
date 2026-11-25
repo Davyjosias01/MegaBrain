@@ -30,6 +30,7 @@ RESULTADOS = RAIZ / "results-by-sprints" / "sprint06"
 RESULTADOS.mkdir(parents=True, exist_ok=True)
 CHECKPOINT_SPRINT5 = RAIZ / "results-by-sprints" / "sprint05" / "base-modelo.pt"
 CHECKPOINT_CLASSIFICADOR = RAIZ / "modelos" / "classificador-spam.pt"
+CHECKPOINT_INSTRUCOES = RAIZ / "modelos" / "instrucoes-gpt2.pt"
 
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
@@ -133,6 +134,23 @@ def treinar_configuracao(verboso: bool = False, **alteracoes) -> dict:
     }
 
 
+# --- fine-tuning de instruções -----------------------------------------------
+# Configuração do treino de instruções (seção 7.6 do livro), com o modelo e o
+# número de blocos treináveis reduzidos para caber em CPU com 7,5 GB de RAM.
+TREINO_INSTRUCOES = {
+    "tamanho": "small",            # GPT-2 124M; o capítulo usa o "medium" (355M)
+    "num_epocas": 2,
+    "batch_size": 8,
+    "otimizador": "AdamW",
+    "taxa_aprendizado": 5e-5,
+    "weight_decay": 0.1,
+    "blocos_treinaveis": 6,        # None = modelo inteiro, como no capítulo
+    "frequencia_avaliacao": 10,
+    "lotes_avaliacao": 5,
+    "semente": SEMENTE,
+}
+
+
 # --- métricas sobre o texto gerado ------------------------------------------
 def distinct_n(ids: list[int], n: int) -> float:
     """Fração de n-gramas distintos entre os gerados: 1 = nenhuma repetição."""
@@ -187,6 +205,7 @@ def salvar_figura(fig, nome: str) -> Path:
 
 __all__ = [
     "RAIZ", "RESULTADOS", "CHECKPOINT_SPRINT5", "CHECKPOINT_CLASSIFICADOR", "SEMENTE",
+    "CHECKPOINT_INSTRUCOES", "TREINO_INSTRUCOES",
     "TREINO_CLASSIFICADOR", "novo_classificador", "treinar_configuracao", "DISPOSITIVO", "CONTEXTO", "TOKENIZADOR",
     "semear", "cabecalho", "distinct_n", "repeticao_n",
     "salvar_tabela", "imprimir_tabela", "salvar_figura", "plt",

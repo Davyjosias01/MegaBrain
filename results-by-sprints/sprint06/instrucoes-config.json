@@ -1,0 +1,36 @@
+{
+  "treino": {
+    "tamanho": "small",
+    "num_epocas": 2,
+    "batch_size": 8,
+    "otimizador": "AdamW",
+    "taxa_aprendizado": 5e-05,
+    "weight_decay": 0.1,
+    "blocos_treinaveis": 6,
+    "frequencia_avaliacao": 10,
+    "lotes_avaliacao": 5,
+    "semente": 123
+  },
+  "modelo": {
+    "vocab_size": 50257,
+    "context_length": 1024,
+    "emb_dim": 768,
+    "n_heads": 12,
+    "n_layers": 12,
+    "drop_rate": 0.0,
+    "qkv_bias": true
+  },
+  "exemplos": {
+    "treino": 913,
+    "validacao": 55,
+    "teste": 107
+  },
+  "parametros_treinaveis": 42528768,
+  "parametros_totais": 163037184,
+  "dispositivo": "cpu",
+  "tempo_de_treino_s": 865.0,
+  "perda_treino_inicial": 4.013641357421875,
+  "perda_validacao_inicial": 4.095509903771537,
+  "perda_treino_final": 0.599012142419815,
+  "perda_validacao_final": 0.7798448971339634
+}
