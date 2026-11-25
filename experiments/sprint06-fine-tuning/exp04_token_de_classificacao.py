@@ -48,8 +48,8 @@ from classificacao import PASTA_SPAM
 from exp03_camadas_treinaveis import resultado_base
 
 
-def teto_do_primeiro_token() -> float:
-    """Acurácia de teste do melhor classificador possível que só vê o primeiro token.
+def referencia_do_primeiro_token() -> float:
+    """Acurácia de teste de uma tabela simples que só vê o primeiro token.
 
     Para cada primeiro token visto no treino, responde a classe mais frequente
     entre as mensagens de treino que começam com ele; para um token nunca
@@ -87,13 +87,13 @@ def executar() -> list[dict]:
             "tempo_min": r["tempo_s"] / 60,
             "origem": origem,
         })
-    teto = teto_do_primeiro_token()
+    referencia = referencia_do_primeiro_token()
     imprimir_tabela(linhas)
-    print(f"  referência: melhor regra possível usando só o primeiro token = {teto:.2%} no teste")
+    print(f"  referência: tabela de contagem do treino, só com o primeiro token = {referencia:.2%} no teste")
     linhas.append({
         "posicao": "regra de contagem pelo primeiro token (sem modelo)",
         "tokens_visiveis": "só o primeiro",
-        "acuracia_validacao": "-", "acuracia_teste": teto, "tempo_min": 0.0, "origem": "contagem no treino",
+        "acuracia_validacao": "-", "acuracia_teste": referencia, "tempo_min": 0.0, "origem": "contagem no treino",
     })
     salvar_tabela(linhas, "exp04-token-de-classificacao")
     _grafico(linhas)
